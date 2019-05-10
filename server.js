@@ -7,7 +7,7 @@ const session			= require('express-session');
 require('./db/db.js');
 
 app.use(session({
-	secret: 'as;dlkfjas;tiuqewap4oihjaskflkdsfj;laSJFDA'
+	secret: 'asdlkfjastiuqewap4oihjaskflkdsfjlahgkjhgl',
 	resave: false,
 	saveUninitialized: false
 }));
