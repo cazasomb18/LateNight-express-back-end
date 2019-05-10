@@ -1,0 +1,25 @@
+{
+  "name": "latenight-express-back-end",
+  "version": "1.0.0",
+  "description": "Project 3 - Late Night",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.16.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cazasomb18/LateNight-express-back-end.git"
+  },
+  "keywords": [],
+  "author": "Clayton Smith",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cazasomb18/LateNight-express-back-end/issues"
+  },
+  "homepage": "https://github.com/cazasomb18/LateNight-express-back-end#readme"
+}
