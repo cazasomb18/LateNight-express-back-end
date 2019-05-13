@@ -3,7 +3,9 @@ const router 		= express.Router();
 const mongoose 		= require('mongoose');
 const session 		= require('express-session');
 const bcrypt		= require('bcryptjs');
-const User 			= require('../models/user');
+
+///require user model///
+const User 			= require('../models/user.js');
 
 
 // router.get('/login', async (req, res) => {

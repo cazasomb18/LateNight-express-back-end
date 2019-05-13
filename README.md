@@ -2,19 +2,19 @@
 
 ## User Stories
 
-1.) When user goes to the home page they will be prompted to login or create an account.  If they don't have an account they will have an option to register for their account.
+	1.) When user goes to the home page they will be prompted to login or create an account.  If they<br/> don't have an account they will have an option to register for their account.
 
-2.) Once an account has been created, they will have access to the dataset, which is a list of restaurants in Chicago open later than 2200 hours.
+	2.) Once an account has been created, they will have access to the dataset, which is a list of<br/>restaurants in Chicago open later than 2200 hours.
 
-3.) This list will display the following fields: name, phone number, address and hours opened. This list is searchable and will be able to return the restaurant of their choice and can be sorted according to the following fields: name and location.
+	3.) This list will display the following fields: name, phone number, address and hours opened. This<br/> list is searchable and will be able to return the restaurant of their choice and can be sorted<br/> according to the following fields: name and location.
 
-4.) After the user has identified the restaurant they want to view, they will able to leave comments on that restaurant telling the LateNight user community anything they wish to disclose about their experience at that particular restaurant.
+	4.) After the user has identified the restaurant they want to view, they will able to leave comments on that restaurant telling the LateNight user community anything they wish to disclose about<br/> their experience at that particular restaurant.
 
 ## ROUTES
 
 ## EXPRESS:
 
- 	USER.CONTROLLER - NEW ROUTE - if user is not logged in then they will be redirected to the registration page.  This will create the new user in the local mongoDB.
+ 	USER.CONTROLLER - NEW ROUTE - if user is not logged in then they will be redirected to the<br/> registration page.  This will create the new user in the local mongoDB.
 
  	POST /user - create the new user
  		request body should include these fields:
@@ -23,7 +23,7 @@
  		email
 
 
- 	GET /asdf -- gives me ___ data
+ ## GET /asdf -- gives me ___ data
 
 
  	USER.CONTROLLER - POST ROUTE - if user hasn't registered they will redirected to the restaurants index page.  This is also save the user's information in a local mongoDB.
