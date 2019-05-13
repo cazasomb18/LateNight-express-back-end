@@ -30,6 +30,10 @@ app.use(cors(corsOptions));
 const restaurantController = require('./controllers/restaurantController');
 const authController = require('./controllers/authController');
 
+// app.use('/restaurants', restaurantController);
+
+app.use('/auth', authController);
+
 app.listen(process.env.PORT || 9000, () => {
 	console.log('listening on port 9000');
 });

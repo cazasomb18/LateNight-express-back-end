@@ -12,7 +12,7 @@ const session 			= require('express-session');
 
 /// MAKE A login route that will simulate or actually be a user login
 router.get('/login', (req, res) => {
-	res.render('login.ejs', {
+	res.render('./auth/login.ejs', {
 		message: req.session.message
 	})
 });
@@ -20,7 +20,7 @@ router.get('/login', (req, res) => {
 
 /// REGISTRATION GET USER ROUTE
 router.get('/register', (req, res) => {
-		res.render('register.ejs', {
+		res.render('../auth/register.ejs', {
 			message: req.session.message
 		})	
 });
