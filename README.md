@@ -5,12 +5,12 @@
 
 ### BackEnd
 
--~~1.) Resolve "Router.use() requires middleware" error message (server.js 38:5)~~-<br/>
+~~1.) Resolve "Router.use() requires middleware" error message (server.js 38:5)~~<br/>
 2.) Test auth routes and restaurant routes<br/>
 3.) auth routes - functionality - create user, access their their comments (edit/delete), leave possibility to save savorite restaurants.<br/>
 4.) commentController/routes - create comments, store comments to userDbId, comments will have to be pushed into userModel?<br/>
 
-## 05-12-2019: Questions to Ask
+## 05-13-2019: Questions to Ask
 ### restaurantController:
 
 ###### Is only getting the data from the 3rd party API... what is the best practice for having the functionality of users leaving comments on API data?
