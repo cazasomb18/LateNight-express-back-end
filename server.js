@@ -13,7 +13,7 @@ app.use(session({
 }));
 
 const corsOptions = {
-	origin: 'http://localhost:3000',
+	origin: 'http://localhost:3001',
 	credentials: true,
 	optionsSuccessStatus: 200
 }
@@ -31,7 +31,7 @@ const restaurantController = require('./controllers/restaurantController');
 const authController = require('./controllers/authController');
 
 app.listen(process.env.PORT || 9000, () => {
-	console.log('listening on port 9000');
+	console.log('BOOM!!! listening on port 9000');
 });
 
-modele.exports = app;
+module.exports = app;
