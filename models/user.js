@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 
-const connectionString = 'mongodb://localhost/restaurants'
-const Restaurant = require('./restaurant.js');
+const connectionString = 'mongodb://localhost/lateNight'
+
+// const Restaurant = require('./restaurant.js');
 
 const UserSchema = new mongoose.Schema({
 	userName: { type: String, required: true},
