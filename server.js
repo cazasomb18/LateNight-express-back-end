@@ -3,6 +3,9 @@ const app				= express();
 const bodyParser		= require('body-parser');
 const cors				= require('cors');
 const session			= require('express-session');
+require('isomorphic-fetch');
+require('es6-promise').polyfill();
+
 
 require('./db/db.js');
 
