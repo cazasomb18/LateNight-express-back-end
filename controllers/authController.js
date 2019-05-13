@@ -7,18 +7,6 @@ const router 		= express.Router();
 ///require user model///
 const User 			= require('../models/user.js');
 
-// router.get('/login', (req, res) => {
-// 	res.render('login.ejs', {
-// 		message: req.session.message
-// 	})
-// });
-
-// router.get('/register', (req, res) => {
-// 	res.render('register.ejs', {
-// 		message: req.session.message
-// 	})
-// });
-
 
 router.post('/', async (req, res, next) => {
 	console.log(req.body, ' this is session');

@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const restaurantSchema = new mongoose.Schema({
 	name: String,
-	description: String,
+	address: String,
 	openLate: Boolean,
 	//if opening_hours > 2200x
 	openNow: Boolean

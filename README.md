@@ -6,7 +6,7 @@
 ### BackEnd
 
 ~~1.) Resolve "Router.use() requires middleware" error message (server.js 38:5)~~<br/>
-2.) Test auth routes and restaurant routes<br/>
+~~2.) Test auth routes~~ and restaurant routes<br/>
 3.) auth routes - functionality - create user, access their their comments (edit/delete), leave possibility to save savorite restaurants.<br/>
 4.) commentController/routes - create comments, store comments to userDbId, comments will have to be pushed into userModel?<br/>
 

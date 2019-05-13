@@ -4,7 +4,7 @@ const Restaurant = require('../models/restaurant');
 
 router.get('/', async (req, res, next) => {
 	try{
-		const response = await fetch('https://maps.googleapis.com/maps/api/place/textsearch/xml?query=restaurants+in+Chicago&key=AIzaSyCbQ8Y7CHZUWrnEGUCqC8fNR4Kw1dfk5AE');
+		const response = await fetch('https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurants+in+Chicago&key=AIzaSyCbQ8Y7CHZUWrnEGUCqC8fNR4Kw1dfk5AE');
 		console.log('this is req.body: ', req.session);
 		for (let i = 0; i > response.body.results.length; i++){
 			response.body.results[i].place_id
@@ -28,4 +28,4 @@ router.get('/', async (req, res, next) => {
 		console.error(err);
 		res.send(err)
 	}
-})
+});
