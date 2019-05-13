@@ -29,7 +29,9 @@ router.get('/register', (req, res) => {
 /// REGISTRATION POST USER ROUTE
 router.post('/register', async (req, res, next) => {
 	console.log("req.body is: ", req.body);
-	const queriedUserName = await User.findOne({userName: req.body.userName});
+	const queriedUserName = await User.findOne({
+		userName: req.body.userName
+	});
 	console.log(queriedUserName);
 	if (queriedUserName){
 		console.log(`${queriedUserName} ALREADY EXISTS!!!`);

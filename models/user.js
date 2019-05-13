@@ -1,9 +1,24 @@
 const mongoose = require('mongoose');
 
+const connectionString = 'mongodb://localhost/restaurants'
+const Restaurant = require('./restaurant.js');
+
 const UserSchema = new mongoose.Schema({
-	userName: String,
-	password: String,
-	email: String
+	userName: { type: String, required: true},
+	password: {type: String, required: true},
+	email: {type: String, required: true}
 });
 
+console.log("");
+console.log("");
+console.log("");
+console.log("THIS IS THE USER SCHEMA: ");
+
 module.exports = mongoose.model('User', UserSchema);
+
+console.log("");
+console.log("");
+console.log("");
+console.log("USER MODEL:");
+
+module.exports = User;

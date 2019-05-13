@@ -1,0 +1,30 @@
+	<%- include ./partials/header.ejs %>
+
+
+<div id='centerHead'>
+	<h2>Login To LateNight</h2>
+</div>
+<div class='container'>
+	<div class="row">
+		<div class='col-12'>
+			<form id="authLogin" action='/auth/login' method='POST'>
+				<h6>Username: </h6>
+				<input type="text" name="userName" placeholder='enter username'>
+				
+				<h6>Password: </h6>
+				<input type="password" name="password" placeholder='6 digit password'>
+				
+				<button type='submit'>Login</button>
+			</form>
+			
+			<small><%= message %></small>
+			
+			<a href="/auth/register">Don't Have an Account? Register Here!</a>
+		</div>
+		
+
+	</div>	
+</div>
+
+
+<%- include ./partials/footer.ejs %>
