@@ -12,10 +12,14 @@ app.use(session({
 	saveUninitialized: false
 }));
 
+
 //// SET UP MIDDLEWARE, ANY CLIENT CAN MAKE REQUEST TO SERVER///
 app.use(bodyParser.urlencoded({
 	extended: false
 	}));
+
+
+app.use(bodyParser.urlencoded({extended: false}));
 
 app.use(bodyParser.json());
 
@@ -40,6 +44,10 @@ app.use('/auth', authController);
 
 
 
+
+// app.use('/restaurants', restaurantController);
+
+app.use('/auth', authController);
 
 app.listen(process.env.PORT || 9000, () => {
 	console.log('BOOM!!! listening on port 9000');

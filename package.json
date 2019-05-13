@@ -4,12 +4,19 @@
   "description": "Project 3 - Late Night",
   "main": "server.js",
   "dependencies": {
+    "bcrypt": "^3.0.5",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
+    "ejs": "^2.6.1",
     "express": "^4.16.4",
     "express-session": "^1.16.1",
     "method-override": "^3.0.0",
+<<<<<<< HEAD
     "mongoose": "^5.5.7"
+=======
+    "mongoose": "^5.5.7",
+    "serve-static": "^1.14.1"
+>>>>>>> css
   },
   "devDependencies": {},
   "scripts": {
