@@ -13,21 +13,20 @@
 
 ## 05-12-2019: Questions to Ask
 ### restaurantController:
-	- is only getting the data from the 3rd party API... is the the best practice for having the functionality of users leaving comments on API data?
-	- making second API call in restaurantController - googlePlaces fetch followed by googleDetails 
-	 the second API call depends on the information returns from the first.
 
-	- what are the advantages of storing 3rd partyAPI data into MongoDB?
-		-- I want users to be able to leave comments on particular documents gathered from the 3rd 
+	###### Is only getting the data from the 3rd party API... what is the best practice for having the functionality of users leaving comments on API data?
+	###### Making second API call in restaurantController - googlePlaces fetch followed by googleDetails; the second API call depends on the information returns from the first.
+
+	###### What are the advantages of storing 3rd partyAPI data into MongoDB?
+		--I want users to be able to leave comments on particular documents gathered from the 3rd 
 		party API - does this necessitate a mongoDB connection to that API?
-		-- I was to leave the possibility for users to be able to save their favorite restaurants 
+		--I was to leave the possibility for users to be able to save their favorite restaurants 
 		 to their profile - would this also be a good way to do this?
 
-	- I don't want my 3rd party API data to be editable - I just want it to be sorted according to 
-	user fields returned via 3rd party API and have the users to be able to leave comments on 
-	API entries - what is the best way to go about this?  
+	###### I don't want my 3rd party API data to be editable - I just want it to be sorted according to user fields returned via 3rd party API and have the users to be able to leave comments on 
+	API entries - what is the best way to go about this?
 
-	-- it's sounding more and more like I probably need to create mongoDB entries for the restaurants
+	###### it's sounding more and more like I probably need to create mongoDB entries for the restaurants
 	 but what is the most efficient way to do it?  I don't want to have to run a massive query everytime a user logs in...
 
 ## User Stories
@@ -57,35 +56,40 @@
 
  ## GET /asdf -- gives me ___ data
 
+### AUTH CONTROLLER
 
- 	USER.CONTROLLER - POST ROUTE - if user hasn't registered they will redirected to the restaurants
- 	 index page.  This is also save the user's information in a local mongoDB.
+	#### GET /auth/:id - show's users profile information - option to delete/edit user info
+		- possibly dump edit function if running short on time today.
+
+	#### GET /auth/login - show's success message once user has logged in (req.session.message)
+
+	#### GET /auth/register - show's success message once user has registered (req.session.message)
+
+	#### POST /auth/register - authenticaion "meat/potatoes" - creates encrypted pw/userDbId/profile
+
+	#### POST /auth/login - user isn't logged in - redirect to register
+
+	#### GET /auth/logout - destroys session
 
 
+### RESTAURANT CONTROLLER
 
- 	RESTAURANT.CONTROLLER - GET ROUTE - after user has logged in this is what they will see - an 
- 	index of all restaurants in Chicago opened later than 2200 hours.
+	#### GET /restaurants - an index of all restaurants in Chicago opened later than 2200 hours
 
- 	GET /restaurants - an index of all restaurants in Chicago opened later than 2200 hours
+	#### GET /restaurants/:id - show info about a restaurant -- include comments made by user(s)
+
+### COMMENT CONTROLLER (using restaurants endpoint as '/')
+
+	#### GET /:id/new - leave a new comment on a restaurant.
+	###### check the endpoint here ... not sure if that's how you wanto do it
+
+	#### GET /:id - shows comments let on that restaurant
+
+ 	#### DELETE /:id - users will be able to delete their comments (if logged in).
+
+ 	#### POST /:id - users will be able to leave a comment on any restaurant (if logged in).
 
 
- 	GET /restaurants/:id - show info about a restaurant -- include comments 
-
- 	COMMENT.CONTROLLER - POST ROUTE - users will be able to leave a comment on any restaurant in the 
- 	restaurants index page detailing their experience(s).  This will be uniquely tied to their 
- 	account and they will be unable to leave a comment unless they are logged in.
-
- 	POST /comments - users will be able to leave a comment on any restaurant
-
- 	COMMENT.CONTROLLER - DELETE ROUTE - users will have the option to delete their comments they 
- 	have left if they want to.
-
- 	DELETE /comments/:id - 
-
- 	COMMENT.CONTROLLER - EDIT ROUTE - users will have the option to edit their comments after 
- 	posting.
-
- 	PUT /comments/:id - update comment
 
 ## REACT:
 	UI - temporarily handles all user information via userController, commentController, and 

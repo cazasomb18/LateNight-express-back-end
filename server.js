@@ -35,7 +35,8 @@ app.use(cors(corsOptions));
 const restaurantController = require('./controllers/restaurantController.js');
 const authController = require('./controllers/authController.js');
 
-// app.use('/restaurants', restaurantController)
+//app.use('/restaurants', restaurantController);
+	// having issues establishing this endpoint
 app.use('/auth', authController);
 
 
