@@ -5,9 +5,9 @@ const methodOverride 	= require('method-override');
 const bodyParser 		= require('body-parser');
 const ejs 				= require('ejs');
 // const pathfinderUI 		= require('pathfinder-ui');
-const User 				= require('../models/user.js');
 const bcrypt 			= require('bcryptjs');
 const session 			= require('express-session');
+const User 				= require('../models/user.js');
 
 
 /// MAKE A login route that will simulate or actually be a user login
@@ -20,7 +20,7 @@ router.get('/login', (req, res) => {
 
 /// REGISTRATION GET USER ROUTE
 router.get('/register', (req, res) => {
-		res.render('../auth/register.ejs', {
+		res.render('./auth/register.ejs', {
 			message: req.session.message
 		})	
 });
