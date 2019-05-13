@@ -12,7 +12,7 @@ app.use(session({
 	saveUninitialized: false
 }));
 
-app.use(bodyparser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 const corsOptions = {

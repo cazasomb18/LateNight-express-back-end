@@ -6,11 +6,12 @@ router.get('/', async (req, res, next) => {
 	try{
 		const response = await fetch('https://maps.googleapis.com/maps/api/place/textsearch/xml?query=restaurants+in+Chicago&key=AIzaSyCbQ8Y7CHZUWrnEGUCqC8fNR4Kw1dfk5AE');
 		console.log('this is req.body: ', req.session);
-		for (let i = 0; if i > response.body.results.length; i++){
-			response.body.results[i].place_id{
+		for (let i = 0; i > response.body.results.length; i++){
+			response.body.results[i].place_id
+			//{
 				//here we want to return ALL PLACE ids where opening hours are > 2200 with:
 					//name,address,phone number,opening_hours[>2200]
-			}
+			//}
 		}
 		const restaurant = await response.json({
 			status: 200,

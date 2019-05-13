@@ -1,6 +1,7 @@
-###Project 3 - Late Night###
+# Project 3 - Late Night
 
-User Stories
+## User Stories
+
 1.) When user goes to the home page they will be prompted to login or create an account.  If they don't have an account they will have an option to register for their account.
 
 2.) Once an account has been created, they will have access to the dataset, which is a list of restaurants in Chicago open later than 2200 hours.
@@ -9,9 +10,10 @@ User Stories
 
 4.) After the user has identified the restaurant they want to view, they will able to leave comments on that restaurant telling the LateNight user community anything they wish to disclose about their experience at that particular restaurant.
 
-ROUTES
+## ROUTES
 
-EXPRESS:
+## EXPRESS:
+
  	USER.CONTROLLER - NEW ROUTE - if user is not logged in then they will be redirected to the registration page.  This will create the new user in the local mongoDB.
 
  	POST /user - create the new user
@@ -47,12 +49,12 @@ EXPRESS:
 
  	PUT /comments/:id - update comment
 
-REACT:
+## REACT:
 	UI - temporarily handles all user information via userController, commentController, and temporarily (in state) handles send that information to the server, which then validates that information and stores it into the mongoDB.
 
 	UI - displays the 3rd party API information to the user (which is received via server/express controller). Rendered in a sortable list displaying the information denoted via fetch request and models.
 
-3RD PARTY API:
+## 3RD PARTY API:
 	RESTAURANT.POST - 3rd party google places api will POST a list of restaurants opened later than 2200 hours and send the data to REACT.
 
 

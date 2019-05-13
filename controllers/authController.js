@@ -6,6 +6,12 @@ const bcrypt		= require('bcryptjs');
 const User 			= require('../models/user');
 
 
+// router.get('/login', async (req, res) => {
+// 	// ({
+// 		message: req.session.message;
+// 	// })
+// });
+
 router.post('/', async (req, res) => {
 	console.log(req.body, 'this is session');
 	try {
@@ -28,13 +34,7 @@ router.post('/register', async (req, res, next) => {
 		console.log(queriedUserName);
 		if (queriedUserName){
 			console.log(`${queriedUserName} ALREADY EXISTS!!!`);
-		} else {
-			const password = req.body.password;
-			const passwordHash = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
-			const userDbEntry{};
-			userDbEntry.username = req.body.username;
-			userDbEntry.password = passwordHash;
-		}try{
+		}try {
 			const createdUser = await User.create(userDbEntry);
 			console.log("=========================");
 			console.log(`${createdUser} <========== user has been created in REGISTER POST ROUTE`);
@@ -43,10 +43,19 @@ router.post('/register', async (req, res, next) => {
 			req.session.usersDbId = createdUser._id;
 			console.log(req.session);
 		}catch(err){
+			// console.log(err);
+			// console.error(err);
 			next(err);
-			res.send(err);
-		}}
-});
+		}else {
+			const password = req.body.password;
+			const passwordHash = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
+			const userDbEntry = {};
+			userDbEntry.username = req.body.username;
+			userDbEntry.password = passwordHash;
+		}
+	}catch(err){
+		next(err);
+}});
 
 
 
