@@ -76,7 +76,7 @@ router.post('/login', async (req, res, next) => {
                 req.session.username = req.body.username;
                 req.session.usersDbId = foundUser._id;
                 console.log(`${req.session} <===== SUCCESSFUL LOGIN!`);
-                res.redirect('/tools') 
+                res.redirect('/restaurants') 
             } else if (passwordMatch === false) {
                 req.session.message = "Username or password is incorrect";
                 console.log("User with that username exists but password incorrect")

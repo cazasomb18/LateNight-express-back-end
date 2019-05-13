@@ -14,11 +14,11 @@ console.log("");
 console.log("");
 console.log("THIS IS THE USER SCHEMA: ");
 
-module.exports = mongoose.model('User', UserSchema);
+const User = mongoose.model('User', UserSchema);
 
 console.log("");
 console.log("");
 console.log("");
-console.log("USER MODEL:");
+console.log("USER MODEL: ");
 
 module.exports = User;
