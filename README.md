@@ -1,7 +1,5 @@
 #  Late Night
 ## Bringing you all the late night kitchens in Chicago
-<<<<<<< HEAD
-=======
 
 ## 05-13-2019: Goals
 
@@ -30,7 +28,6 @@
 
 	###### it's sounding more and more like I probably need to create mongoDB entries for the restaurants
 	 but what is the most efficient way to do it?  I don't want to have to run a massive query everytime a user logs in...
->>>>>>> css
 
 ## 05-13-2019: Goals
 
@@ -44,17 +41,17 @@
 ## 05-13-2019: Questions to Ask
 ### restaurantController:
 
-<<<<<<< HEAD
+
 ###### Is only getting the data from the 3rd party API... what is the best practice for having the functionality of users leaving comments on API data?
 
 ###### Making second API call in restaurantController - googlePlaces fetch followed by googleDetails; the second API call depends on the information returns from the first.
-=======
+
 	1.) When user goes to the home page they will be prompted to login or create an account.  If 
 	they don't have an account they will have an option to register for their account.
 
 	2.) Once an account has been created, they will have access to the dataset, which is a list of
 	restaurants in Chicago open later than 2200 hours.
->>>>>>> css
+
 
 -I want users to be able to leave comments on particular documents gathered from the 3rd party API <br/>
 --does this necessitate a mongoDB connection to that API?<br/>
@@ -90,13 +87,13 @@
 ### GET /asdf -- gives me ___ data
 
 ### AUTH CONTROLLER
-<<<<<<< HEAD
+
 
 #### GET /auth/:id - show's users profile information - option to delete/edit user info
 		- possibly dump edit function if running short on time today.
 
 #### GET /auth/login - show's success message once user has logged in (req.session.message)
-=======
+
 
 	#### GET /auth/:id - show's users profile information - option to delete/edit user info
 		- possibly dump edit function if running short on time today.
@@ -110,11 +107,11 @@
 	#### POST /auth/login - user isn't logged in - redirect to register
 
 	#### GET /auth/logout - destroys session
->>>>>>> css
+
 
 #### GET /auth/register - show's success message once user has registered (req.session.message)
 
-<<<<<<< HEAD
+
 #### POST /auth/register - authenticaion "meat/potatoes" - creates encrypted pw/userDbId/profile
 
 #### POST /auth/login - user isn't logged in - redirect to register
@@ -135,7 +132,7 @@
 ###### check the endpoint here ... not sure if that's how you want to do it
 
 #### GET /:id - shows comments let on that restaurant
-=======
+
 ### RESTAURANT CONTROLLER
 
 	#### GET /restaurants - an index of all restaurants in Chicago opened later than 2200 hours
@@ -174,13 +171,13 @@
 ##### UI - displays the 3rd party API information to the user (which is received via server/express controller). Rendered in a sortable list displaying the information denoted via fetch request and models.
 
 ## 3RD PARTY API:
-<<<<<<< HEAD
+
 
 ##### RESTAURANT.POST - 3rd party google places api will POST a list of restaurants opened later than 2200 hours and send the data to REACT.
-=======
+
 	RESTAURANT.POST - 3rd party google places api will POST a list of restaurants opened later than
 	 2200 hours and send the data to REACT.
->>>>>>> css
+
 
 
 

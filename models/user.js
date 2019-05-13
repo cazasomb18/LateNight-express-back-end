@@ -21,4 +21,3 @@ console.log("");
 console.log("USER MODEL: ");
 
 module.exports = User;
-
