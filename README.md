@@ -6,7 +6,10 @@
 	- Resolve "Router.use() requires middleware" error message (server.js 38:5)
 	- Ask about making second API call in restaurantController
 	- Test auth routes and restaurant routes
-	- 
+	- restaurantController - is only getting the data from the 3rd party API...
+	-- what are the advantages of storing 3rd partyAPI data into MongoDB?
+		--- gives user functionality of saving favorite places, and also provides a place for<br/>
+		users to leave comments.
 
 ## User Stories
 
