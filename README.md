@@ -1,7 +1,7 @@
 #  Late Night
 ## Bringing you all the late night kitchens in Chicago
 
-## 05-12-2019: Goals
+## 05-13-2019: Goals
 
 ### BackEnd
 
@@ -11,7 +11,7 @@
 	 possibility to save savorite restaurants.
 	4.) commentController/routes - create comments, store comments to userDbId, comments will have to be pushed into userModel?
 
-## 05-12-2019: Questions to Ask
+## 05-13-2019: Questions to Ask
 ### restaurantController:
 
 	###### Is only getting the data from the 3rd party API... what is the best practice for having the functionality of users leaving comments on API data?

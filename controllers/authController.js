@@ -4,64 +4,114 @@ const mongoose 			= require('mongoose');
 const methodOverride 	= require('method-override');
 const bodyParser 		= require('body-parser');
 const ejs 				= require('ejs');
-// const pathfinderUI 		= require('pathfinder-ui');
-const bcrypt 			= require('bcryptjs');
+const bcrypt 			= require('bcrypt');
 const session 			= require('express-session');
 const User 				= require('../models/user.js');
 
 
-/// MAKE A login route that will simulate or actually be a user login
-router.get('/login', (req, res) => {
-	res.render('./auth/login.ejs', {
-		message: req.session.message
-	})
-});
-///END OF LOGIN GET USER ROUTE
-
-/// REGISTRATION GET USER ROUTE
-router.get('/register', (req, res) => {
-		res.render('./auth/register.ejs', {
-			message: req.session.message
-		})	
-});
-/// END OF REGISTRATION GET USER ROUTE
-
-/// REGISTRATION POST USER ROUTE
-router.post('/register', async (req, res, next) => {
-	console.log("req.body is: ", req.body);
-	const queriedUserName = await User.findOne({
-		userName: req.body.userName
-	});
-	console.log(queriedUserName);
-	if (queriedUserName){
-		console.log(`${queriedUserName} ALREADY EXISTS!!!`);
-		res.redirect('/auth/login');
+/// POST auth/register login user that isn't already logged in///
+router.post('/login', async (req, res) => {
+	const foundUser = await User.findOne({userName: req.body.userName});
+	if(foundUser) {
+		if(bcrypt.compareSync(req.body.password, foundUser.password)) {
+			req.session.userName = req.body.userName;
+			req.session.logged = true;
+			req.session.message = undefined
+			res.json({
+				status: 200,
+				data: foundUser
+			})
+		} else {
+			req.session.message = "Username or password were incorrect"
+			res.json({
+				status: 400,
+				data: "Login failed. Username or password were incorrect"
+			})
+		}
 	} else {
-		const password = req.body.password;
-		const passwordHash = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
-		const userDbEntry = {};
-		userDbEntry.userName = req.body.userName;
-		userDbEntry.password = passwordHash;
-	 try{	
-		const createdUser = await User.create(userDbEntry);
-		console.log("=================");
-		console.log(`${createdUser} <======= user has been created in REGISTER POST USER ROUTE`);
-		console.log("=================");
-		console.log(req.session);
-		req.session.logged = true;
-		req.session.usersDbId = createdUser._id;
-		res.redirect('/auth/login');  ///not sure about redirect site
-	}catch(err){
-		next(err);
-		res.send(err);
-	}}
+		req.session.message = "There were no users under that username. Please register."
+		res.json({
+			status: 200,
+			data: "There were no users under that username. Please register."
+		})
+	}
 });
-/// END OF REGISTRATION POST USER ROUTE
+///END of POST auth/login///
 
 
 
-/// POST USER LOGIN ROUTE
-/// make the form in login.ejs make a request to this
+/// POST /auth/register --> sees if user exists and creates new one
+
+router.post('/register', async (req, res, next) => {
+	try {
+		console.log('hitting route');
+		const userCheck = await User.findOne({userName: req.body.userName});
+		if(userCheck) {
+			req.session.message = "This username is already in use. Please select another"
+			console.log("This username is already in use. Please select another");
+		} else {
+			const password = req.body.password;
+			console.log(password);
+			const passwordHash = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
+			const userEntry = {};
+			userEntry.userName = req.body.userName;
+			userEntry.password = passwordHash;
+			userEntry.email = req.body.email
+			const user = await User.create(userEntry);
+			console.log(user);
+			req.session.userName = req.body.userName;
+			req.session.logged = true;
+			req.session.message = undefined;
+			res.json({
+				status: 200,
+				data: user
+			})
+		}
+	} catch(err) {
+		next(err)
+	}
+})
+
+// router.post('/register', async (req, res, next) => {
+// 	console.log("req.body is: ", req.body);
+// 	const queriedUserName = await User.findOne({
+// 		userName: req.body.userName
+// 	});
+// 	console.log(queriedUserName);
+// 	if (queriedUserName){
+// 		console.log(`${queriedUserName} ALREADY EXISTS!!!`);
+// 	} else {
+// 		const password = req.body.password;
+// 		const passwordHash = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
+// 		const userDbEntry = {};
+// 		userDbEntry.userName = req.body.userName;
+// 		userDbEntry.password = passwordHash;
+// 		req.session.message ="Registration successful."
+// 		res.json({
+// 			status: 200,
+// 			data: userDbEntry
+// 		});
+// 	 try{	
+// 		const createdUser = await User.create(userDbEntry);
+// 		console.log("=================");
+// 		console.log(`${createdUser} <======= user has been created in REGISTER POST USER ROUTE`);
+// 		console.log("=================");
+// 		console.log(req.session);
+// 		req.session.logged = true;
+// 		req.session.usersDbId = createdUser._id;
+// 		res.json({
+// 			status: 200,
+// 			data: createdUser
+// 		})
+// 	}catch(err){
+// 		next(err);
+// 	}}
+// });
+/// END of POST auth/register route///
+
+
+
+/// POST auth/login route ///
 router.post('/login', async (req, res, next) => {
     try {
         const foundUser = await User.findOne({'userName': req.body.userName});
@@ -88,13 +138,13 @@ router.post('/login', async (req, res, next) => {
         res.send(err)
     }
 });
-/// END OF POST USER LOGIN ROUTE
+/// END of POST/auth/login ROUTE///
 
 
 
 
 
-/// GET LOGOUT USER ROUTE (DESTROY)
+/// GET auth/logout route (destroy session) ///
 router.get('/logout', (req, res) => {
 	req.session.destroy((err) => {
 		if (err) {
@@ -105,7 +155,7 @@ router.get('/logout', (req, res) => {
 		}
 	})	
 });
-/// END OF LOGOUT USER ROUTE (DESTROY)
+/// END of auth/logout route (destroy session) ///
 
 
 
