@@ -1,11 +1,23 @@
 const express 		= require('express');
 const router 		= express.Router();
-// const mongoose 		= require('mongoose');
-// const session 		= require('express-session');
+// const mongoose 	= require('mongoose');
+// const session 	= require('express-session');
 // const bcrypt		= require('bcryptjs');
 
 ///require user model///
 const User 			= require('../models/user.js');
+
+// router.get('/login', (req, res) => {
+// 	res.render('login.ejs', {
+// 		message: req.session.message
+// 	})
+// });
+
+// router.get('/register', (req, res) => {
+// 	res.render('register.ejs', {
+// 		message: req.session.message
+// 	})
+// });
 
 
 router.post('/', async (req, res, next) => {
