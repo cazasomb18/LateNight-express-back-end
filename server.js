@@ -29,3 +29,5 @@ const authController = require('./controllers/authController');
 app.listen(process.env.PORT || 9000, () => {
 	console.log('listening on port 9000');
 });
+
+modele.exports = app;
