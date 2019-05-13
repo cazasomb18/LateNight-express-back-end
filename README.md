@@ -24,8 +24,8 @@
 ###### I don't want my 3rd party API data to be editable - I just want it to be sorted according to <br/>user fields returned via 3rd party API and have the users to be able to leave comments on <br/>
 API entries - what is the best way to go about this?
 
-	###### it's sounding more and more like I probably need to create mongoDB entries for the restaurants<br/>
-	 but what is the most efficient way to do it?  I don't want to have to run a massive query everytime a user logs in...<br/>
+###### it's sounding more and more like I probably need to create mongoDB entries for the restaurants<br/>
+	 -but what is the most efficient way to do it?  I don't want to have to run a massive query everytime a user logs in...<br/>
 
 ## User Stories
 
@@ -52,22 +52,22 @@ API entries - what is the best way to go about this?
  		email
 
 
- ### GET /asdf -- gives me ___ data
+### GET /asdf -- gives me ___ data
 
 ### AUTH CONTROLLER
 
-	#### GET /auth/:id - show's users profile information - option to delete/edit user info
+#### GET /auth/:id - show's users profile information - option to delete/edit user info
 		- possibly dump edit function if running short on time today.
 
-	#### GET /auth/login - show's success message once user has logged in (req.session.message)
+#### GET /auth/login - show's success message once user has logged in (req.session.message)
 
-	#### GET /auth/register - show's success message once user has registered (req.session.message)
+#### GET /auth/register - show's success message once user has registered (req.session.message)
 
-	#### POST /auth/register - authenticaion "meat/potatoes" - creates encrypted pw/userDbId/profile
+#### POST /auth/register - authenticaion "meat/potatoes" - creates encrypted pw/userDbId/profile
 
-	#### POST /auth/login - user isn't logged in - redirect to register
+#### POST /auth/login - user isn't logged in - redirect to register
 
-	#### GET /auth/logout - destroys session
+#### GET /auth/logout - destroys session
 
 
 ### RESTAURANT CONTROLLER
@@ -76,10 +76,11 @@ API entries - what is the best way to go about this?
 
 #### GET /restaurants/:id - show info about a restaurant -- include comments made by user(s)
 
-### COMMENT CONTROLLER (using restaurants endpoint as '/')
+#### COMMENT CONTROLLER (using restaurants endpoint as '/')
 
 #### GET /:id/new - leave a new comment on a restaurant.
-###### check the endpoint here ... not sure if that's how you wanto do it
+
+###### check the endpoint here ... not sure if that's how you want to do it
 
 #### GET /:id - shows comments let on that restaurant
 
@@ -89,7 +90,7 @@ API entries - what is the best way to go about this?
 
 
 
-## REACT:
+### REACT:
 
 UI - temporarily handles all user information via userController, commentController, and temporarily (in state) handles send that information to the server, which then validates that information and stores it into the mongoDB.
 
