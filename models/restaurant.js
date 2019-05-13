@@ -15,11 +15,11 @@ console.log("");
 console.log("");
 console.log("THIS IS THE RESTAURANT SCHEMA: ");
 
-const Restaurant = mongoose.model('Restaurant', restaurantSchema);
+const Restaurants = mongoose.model('Restaurant', restaurantSchema);
 
 console.log("");
 console.log("");
 console.log("");
 console.log("THIS IS THE RESTAURANT MODEL: ");
 
-module.exports = Restaurant;
+module.exports = Restaurants;

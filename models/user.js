@@ -1,13 +1,5 @@
 const mongoose = require('mongoose');
 
-
-const userSchema = new mongoose.Schema({
-	username: {type: String, required: true},
-
-const connectionString = 'mongodb://localhost/lateNight'
-
-// const Restaurant = require('./restaurant.js');
-
 const UserSchema = new mongoose.Schema({
 	userName: { type: String, required: true},
 
@@ -15,8 +7,6 @@ const UserSchema = new mongoose.Schema({
 	email: {type: String, required: true}
 });
 
-
-module.exports = mongoose.model('User', userSchema);
 
 console.log("");
 console.log("");

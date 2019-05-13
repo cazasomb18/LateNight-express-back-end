@@ -1,23 +1,16 @@
-<<<<<<< HEAD
-const express 		= require('express');
-const router 		= express.Router();
-// const mongoose 	= require('mongoose');
-// const session 	= require('express-session');
-// const bcrypt		= require('bcryptjs');
-=======
+
 const express 			= require('express');
 const router 			= express.Router();
 const mongoose 			= require('mongoose');
 const methodOverride 	= require('method-override');
 const bodyParser 		= require('body-parser');
-const ejs 				= require('ejs');
 const bcrypt 			= require('bcrypt');
 const session 			= require('express-session');
 const User 				= require('../models/user.js');
->>>>>>> css
 
 
-<<<<<<< HEAD
+
+
 
 router.post('/', async (req, res, next) => {
 	console.log(req.body, ' this is session');
@@ -34,7 +27,9 @@ router.post('/', async (req, res, next) => {
 	}catch (err){
 		console.log(err);
 		res.next(err);
-=======
+	}
+})
+
 /// POST auth/register login user that isn't already logged in///
 router.post('/login', async (req, res) => {
 	const foundUser = await User.findOne({userName: req.body.userName});
@@ -96,53 +91,25 @@ router.post('/register', async (req, res, next) => {
 	} catch(err) {
 		next(err)
 	}
-})
-
-
-
-/// POST auth/login route ///
-router.post('/login', async (req, res, next) => {
-    try {
-        const foundUser = await User.findOne({'userName': req.body.userName});
-        if (!foundUser) {
-            console.log("User not found)")
-            res.redirect('/auth/register')
-        } else if (foundUser) {
-            const passwordMatch = bcrypt.compareSync(req.body.password, foundUser.password)
-            if (passwordMatch === true) {
-                req.session.message = '';
-                req.session.logged = true;
-                req.session.username = req.body.username;
-                req.session.usersDbId = foundUser._id;
-                console.log(`${req.session} <===== SUCCESSFUL LOGIN!`);
-                res.redirect('/restaurants') 
-            } else if (passwordMatch === false) {
-                req.session.message = "Username or password is incorrect";
-                console.log("User with that username exists but password incorrect")
-                res.redirect('/auth/login')
-            }
-        };
-    } catch (err) {
-    	next(err);
-        res.send(err)
-    }
 });
-/// END of POST/auth/login ROUTE///
+/// END of POST auth/login route///
+
 
 
 /// GET auth/logout route (destroy session) ///
-router.get('/logout', (req, res) => {
+router.get('/logout', (req, res, next) => {
 	req.session.destroy((err) => {
-		if (err) {
+		if(err) {
 			next(err)
-			res.send(err)
 		} else {
-			res.redirect('/auth/login')
+			res.json({
+				status:200,
+				data: 'Logout successful'
+			})
 		}
 	})	
-});
+})
 /// END of auth/logout route (destroy session) ///
-
 
 
 module.exports = router;

@@ -43,12 +43,6 @@ app.use('/restaurants', restaurantController);
 app.use('/auth', authController);
 
 
-
-
-// app.use('/restaurants', restaurantController);
-
-app.use('/auth', authController);
-
 app.listen(process.env.PORT || 9000, () => {
 	console.log('BOOM!!! listening on port 9000');
 });
