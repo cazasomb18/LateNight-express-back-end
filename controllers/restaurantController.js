@@ -13,7 +13,7 @@ router.get('/', async (req, res, next) => {
 					//name,address,phone number,opening_hours[>2200]
 			//}
 		}
-		const restaurant = await response.json({
+		const allRestaurants = await response.json({
 			status: 200,
 			data: allRestaurants
 		}

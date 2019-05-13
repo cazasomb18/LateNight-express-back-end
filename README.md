@@ -1,4 +1,12 @@
-# Project 3 - Late Night
+#  Late Night
+## Bringing you all the late night kitchens in Chicago
+
+## 05-12-2019: Goals
+	## BackEnd
+	- Resolve "Router.use() requires middleware" error message (server.js 38:5)
+	- Ask about making second API call in restaurantController
+	- Test auth routes and restaurant routes
+	- 
 
 ## User Stories
 

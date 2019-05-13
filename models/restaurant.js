@@ -4,7 +4,7 @@ const restaurantSchema = new mongoose.Schema({
 	name: String,
 	description: String,
 	openLate: Boolean,
-	//if opening_hours > 2200
+	//if opening_hours > 2200x
 	openNow: Boolean
 });
 
