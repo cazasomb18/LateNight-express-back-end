@@ -13,12 +13,12 @@ const User 				= require('../models/user.js');
 
 
 router.post('/', async (req, res, next) => {
-	console.log(req.body, ' this is session');
+	console.log(req.session, ' <======= this is session');
 	try {
 		const user = await User.create(req.body);
 
 		req.session.logged = true;
-		req.session.username = req.body.username;
+		req.session.userName = req.body.userName;
 
 		res.json({
 			status: 200,

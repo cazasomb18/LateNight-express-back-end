@@ -42,18 +42,30 @@ router.get('/:id', async (req, res, next) => {
 		console.log(response.body);
 		console.log('===========THIS IS RESPONSE.BODY++++++++++++');
 
-		for (let i = 0; i > response.body.length; i++){
+		for (let i = 0; i < response.body.length; i++){
 
-			let placeId = response.body.length.results[i].place_id;
+			console.log(response.body.results[i].place_id);
 
-			// return placeId;
+			const placeId = response.results[i].place_id;
 
-		};
+			console.log('=++==========THIS IS PLACE ID+=+++++++++');
+			console.log(placeId);
+			console.log('=++==========THIS IS PLACE ID+=+++++++++');
+
+			return placeId;
+
+			//methods tried: 
+				// forEach 
+				// for loop
+				// promise.all w/ two await fetch() calls and an iteration between
+
+		}
+
 		console.log("=========PLACE ID+++++++++++: ", placeId);
 
-		response = await fetch(`https://maps.googleapis.com/maps/api/place/details/json?placeid=${placeId}placeId}&fields=opening_hours,periods,close,time&key=${apiKey}`);
+		const newResponse = await fetch(`https://maps.googleapis.com/maps/api/place/details/json?placeid=${placeId}&fields=opening_hours,periods,close,time&key=${apiKey}`);
 
-		const restaurantDetails = await response.json();
+		const restaurantDetails = await newResponse.json();
 
 		JSON.stringify(restaurantDetails);
 
