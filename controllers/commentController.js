@@ -14,7 +14,7 @@ const Restaurant = require('../models/restaurant.js');
 /// require models ///
 
 ///start of comment GET '/restaurants/show' ROUTE ///
-router.get('/:id', async (req, res, next) => {
+router.get('/restaurants/:id', async (req, res, next) => {
 	try {
 		console.log('This is req.session', req.session);
 
@@ -41,7 +41,7 @@ router.get('/:id', async (req, res, next) => {
 
 
 /// start of comment POST '/:id' ROUTE ///
-router.post('/:id', async (req, res, next) => {
+router.post('restaurants/:id', async (req, res, next) => {
 	try{
 
 		console.log("==============================");
@@ -52,7 +52,7 @@ router.post('/:id', async (req, res, next) => {
 
 		if ((req.session.logged = true) && (req.session.userName = req.body.userName)){
 
-			const comment = await Comment.create(req.body);
+			const createdComment = await Comment.create(req.body);
 
 			const foundRestaurant = await Restaurant.findById(req.params.id);
 
@@ -65,10 +65,11 @@ router.post('/:id', async (req, res, next) => {
 			console.log(commentLocation);
 			console.log("==============================");
 
+			await foundRestaurant.save();
+
 		};
 
 		res.json({
-
 			status: 200,
 			data: 'Comment posted successfully'
 
@@ -83,7 +84,7 @@ router.post('/:id', async (req, res, next) => {
 /// END of comment POST '/:id' ROUTE ///
 
 ///start of comment EDIT '/:id' ROUTE ///
-router.put('/:id/edit', async (req, res, next) => {
+router.put('restaurants/:id/edit', async (req, res, next) => {
 	try{
 		const updatedComment = await Comment.findByIdAndUpdate(req.params.id, req.body, {new: true});
 		console.log("==================");
@@ -100,7 +101,7 @@ router.put('/:id/edit', async (req, res, next) => {
 /// END of comment EDIT '/:id' ROUTE ///
 
 /// comment DELETE '/:id' ROUTE ///
-router.delete('/:id', async (req, res) => {
+router.delete('restaurants/:id', async (req, res) => {
 	try{
 		const deletedComment = await Comment.findByIdAndRemove(req.params.id);
 		console.log("+++++++++++++++++++++++");

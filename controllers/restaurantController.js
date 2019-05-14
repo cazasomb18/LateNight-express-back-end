@@ -52,7 +52,7 @@ router.get('/:place_id', async (req, res, next) => {
 		next(err)
 	}
 });
-///END of GET '/:id' restaurants show route///
+///END of GET '/:place_id' restaurants show route///
 
 router.post('/:place_id', async (req, res, next) => {
 	try{
@@ -70,12 +70,14 @@ router.post('/:place_id', async (req, res, next) => {
 			console.log(`${createdRestaurant} <==== createdRestaurant in GET'/restaurant/:place_id ROUTE`);
 			console.log('==================');
 
+			res.json(createdRestaurant);
+
 		}
 
 	}catch(err){
 		next(err)
 	}
-})
+});
 
 
 module.exports = router;

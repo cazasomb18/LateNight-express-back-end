@@ -4,8 +4,7 @@ const connectionString = 'mongodb://localhost/lateNight';
 
 const commentSchema = new mongoose.Schema({
 	commentBody: String,
-	commentAuthor: String,
-	postedOnRestaurantId: String
+	commentAuthor: String
 	/// will probably need to change the format of this to actually grab the mongoDB id for the restaurant///
 });
 
