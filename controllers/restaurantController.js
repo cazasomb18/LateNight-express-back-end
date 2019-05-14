@@ -25,55 +25,29 @@ router.get('/', async (req, res, next) => {
 /// END of GET '/' restaurants show route///
 
 //GET '/:id' restaurants show route -- returns details about restaurants (hours >2200, name, address)
-router.get('/:id', async (req, res, next) => {
+router.get('/:place_id', async (req, res, next) => {
 	try {
+
+
+// if mongoDB restaurant it === Restaurant.findOne({place_id: req.params.place_id});
+		const restaurantId = Restaurant.find
+
 		console.log('+++++++++++++++++++++++++++++');
 		console.log('HITTING ROUTE GET /:ID');
 		console.log('==============================');
 		console.log('this is req.body: ', req.session);
 
-		const response = await fetch('https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=41.8781,-87.6298&radius=5000&type=restaurant&keyword=open&keyword=late&key=' + apiKey);
 
-		// 	response.forEach((i) => {
-		// 		if (i.text() === 'place_id'){
-		// 			return i;
-		// 		}
 
-		// 	});
+		const response = await fetch('https://maps.googleapis.com/maps/api/place/details/json?placeid=' + req.params.place_id + '&fields=opening_hours,periods,close,time&key=' + apiKey);
 
-		// const newResponse = await fetch('https://maps.googleapis.com/maps/api/place/details/json?placeid=' + i + '&fields=opening_hours,periods,close,time&key=$' + apiKey);
 
+		response = JSON.stringify(response);
 
 		console.log('===========THIS IS RESPONSE++++++++++++');
 		console.log(response);
 		console.log('===========THIS IS RESPONSE++++++++++++');
 
-		console.log('===========THIS IS RESPONSE.BODY++++++++++++');
-		console.log(response.body);
-		console.log('===========THIS IS RESPONSE.BODY++++++++++++');
-
-		// for (let i = 0; i < response.body.length; i++){
-
-		// 	console.log(response.body.results[i].place_id);
-
-		// 	const placeId = response.body.results[i].place_id;
-
-		// 	console.log('=++==========THIS IS PLACE ID+=+++++++++');
-		// 	console.log(placeId);
-		// 	console.log('=++==========THIS IS PLACE ID+=+++++++++');
-
-		// 	return placeId;
-
-			//methods tried: 
-				// forEach 
-				// for loop
-				// promise.all w/ two await fetch() calls and an iteration between
-
-		// }
-
-		// console.log("=========PLACE ID+++++++++++: ", placeId);
-
-		// const newResponse = await fetch(`https://maps.googleapis.com/maps/api/place/details/json?placeid=${placeId}&fields=opening_hours,periods,close,time&key=${apiKey}`);
 
 		const restaurantDetails = await response.json();
 
@@ -85,7 +59,7 @@ router.get('/:id', async (req, res, next) => {
 		next(err)
 	}
 });
-///END of GET '/:id' restaurantrs show route///
+///END of GET '/:id' restaurants show route///
 
 
 module.exports = router;

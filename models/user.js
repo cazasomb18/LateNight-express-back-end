@@ -9,14 +9,14 @@ const UserSchema = new mongoose.Schema({
 
 // console.log("");
 // console.log("");
-// console.log("");
-// console.log("THIS IS THE USER SCHEMA: ", UserSchema);
+console.log("");
+console.log("THIS IS THE USER SCHEMA: ", UserSchema);
 
 const User = mongoose.model('User', UserSchema);
 
 // console.log("");
 // console.log("");
-// console.log("");
-// console.log("USER MODEL: ", User);
+console.log("");
+console.log("USER MODEL: ", User);
 
 module.exports = User;

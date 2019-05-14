@@ -7,10 +7,10 @@ const commentSchema = new mongoose.Schema({
 	commentAuthor: String
 });
 
-// console.log("This is the comment Schema: ", commentSchemna);
+console.log("This is the comment Schema: ", commentSchema);
 
 const Comment = mongoose.model('Comment', commentSchema);
 
-// console.log("This is the Comment Model: ", Comment);
+console.log("This is the Comment Model: ", Comment);
 
 module.exports = Comment;

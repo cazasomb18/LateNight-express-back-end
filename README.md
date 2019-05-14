@@ -1,66 +1,55 @@
 #  Late Night
 ## Bringing you all the late night kitchens in Chicago
 
-## 05-13-2019: Goals
+## 05-14-2019: Goals
+
+### Backend - GET IT FINISHED!!!
+
+#### Comment Controller
+	1.) - add edit/delete routes
+
+#### Comment Model
+	1.) - set it up to interact with restaurant model via DB.populate()
+
+#### Restaurant Model
+	1.) - DB getting filled with restaurant data ONLY when commented on
+	2.) - Set up model to accept comment via DB.populate()
+
+
+
+~~## 05-13-2019: Goals~~
 
 ### BackEnd
 
 	~~1.) Resolve "Router.use() requires middleware" error message (server.js 38:5)~~
-	2.) Test auth routes and restaurant routes
-	3.) auth routes - functionality - create user, access their their comments (edit/delete), leave
+	~~2.) Test auth routes and restaurant routes~~
+	~~3.) auth routes - functionality - create user, access their their comments (edit/delete), leave~~
 	 possibility to save savorite restaurants.
 	4.) commentController/routes - create comments, store comments to userDbId, comments will have to be pushed into userModel?
 
-## 05-13-2019: Questions to Ask
+~~## 05-13-2019: Questions to Ask~~
 ### restaurantController:
 
-	###### Is only getting the data from the 3rd party API... what is the best practice for having the functionality of users leaving comments on API data?
-	###### Making second API call in restaurantController - googlePlaces fetch followed by googleDetails; the second API call depends on the information returns from the first.
+	~~###### Is only getting the data from the 3rd party API... what is the best practice for having the functionality of users leaving comments on API data?~~
 
-	###### What are the advantages of storing 3rd partyAPI data into MongoDB?
-		--I want users to be able to leave comments on particular documents gathered from the 3rd 
-		party API - does this necessitate a mongoDB connection to that API?
-		--I was to leave the possibility for users to be able to save their favorite restaurants 
-		 to their profile - would this also be a good way to do this?
+	~~###### Making second API call in restaurantController - googlePlaces fetch followed by googleDetails; the second API call depends on the information returns from the first.~~
 
-	###### I don't want my 3rd party API data to be editable - I just want it to be sorted according to user fields returned via 3rd party API and have the users to be able to leave comments on 
-	API entries - what is the best way to go about this?
+	~~###### What are the advantages of storing 3rd partyAPI data into MongoDB?~~
+		--I want users to be able to leave comments on particular documents gathered from the 3rd party API - does this necessitate a mongoDB connection to that API?
 
-	###### it's sounding more and more like I probably need to create mongoDB entries for the restaurants
-	 but what is the most efficient way to do it?  I don't want to have to run a massive query everytime a user logs in...
+			-Yes...
 
-## 05-13-2019: Goals
+		--I want to leave the possibility for users to be able to save their favorite restaurants to their profile - would this also be a good way to do this?
 
-### BackEnd
+			-I believe with saving the place_id in the front end this will be possible in the future.
 
-~~1.) Resolve "Router.use() requires middleware" error message (server.js 38:5)~~<br/>
-~~2.) Test auth routes~~ and restaurant routes<br/>
-3.) auth routes - functionality - create user, access their their comments (edit/delete), leave possibility to save savorite restaurants.<br/>
-4.) commentController/routes - create comments, store comments to userDbId, comments will have to be pushed into userModel?<br/>
+	###### I don't want my 3rd party API data to be editable - I just want it to be sorted according to user fields returned via 3rd party API and have the users to be able to leave comments on API entries - what is the best way to go about this?
 
-## 05-13-2019: Questions to Ask
-### restaurantController:
+		###### You'll want to have logic in the front end client (React) that saves the place_id for each restaurant entry that the user interacts with.
 
+	~~###### it's sounding more and more like I probably need to create mongoDB entries for the restaurants but what is the most efficient way to do it?  I don't want to have to run a massive query everytime a user logs in...~~
 
-###### Is only getting the data from the 3rd party API... what is the best practice for having the functionality of users leaving comments on API data?
-
-###### Making second API call in restaurantController - googlePlaces fetch followed by googleDetails; the second API call depends on the information returns from the first.
-
-	1.) When user goes to the home page they will be prompted to login or create an account.  If 
-	they don't have an account they will have an option to register for their account.
-
-	2.) Once an account has been created, they will have access to the dataset, which is a list of
-	restaurants in Chicago open later than 2200 hours.
-
-
--I want users to be able to leave comments on particular documents gathered from the 3rd party API <br/>
---does this necessitate a mongoDB connection to that API?<br/>
---I want to leave the possibility for users to be able to save their favorite restaurants to their profile - would this also be a good way to do this?<br/>
-
-###### I don't want my 3rd party API data to be editable - I just want it to be sorted according to <br/>user fields returned via 3rd party API and have the users to be able to leave comments on <br/>API entries - what is the best way to go about this?
-
-###### it's sounding more and more like I probably need to create mongoDB entries for the restaurants<br/>
--but what is the most efficient way to do it?  I don't want to have to run a massive query everytime a user logs in...<br/>
+		###### No.
 
 ## User Stories
 

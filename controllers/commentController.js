@@ -9,9 +9,9 @@ const User 				= require('../models/user.js');
 const Comment = require('../models/comment.js');
 const Restaurant = require('../models/restaurant.js');
 
+router.get('/restaurants/')
 
-
-router.post('/', async (req, res, next) => {
+router.post('/restaurants/:id', async (req, res, next) => {
 	try{
 
 		console.log("==============================");
@@ -50,6 +50,8 @@ router.post('/', async (req, res, next) => {
 	}
 
 });
+
+
 
 module.exports = router;
 

@@ -28,7 +28,7 @@ router.post('/', async (req, res, next) => {
 		console.log(err);
 		res.next(err);
 	}
-})
+});
 
 /// POST auth/register login user that isn't already logged in///
 router.post('/login', async (req, res, next) => {
