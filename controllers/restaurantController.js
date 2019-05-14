@@ -12,11 +12,11 @@ router.get('/', async (req, res, next) => {
 
 		console.log('this is req.body: ', req.body);
 
-		const restaurants = await response.json()
+		const allRestaurants = await response.json()
 
-		JSON.stringify(restaurants)
+		JSON.stringify(allRestaurants)
 
-		res.json(restaurants)
+		res.json(allRestaurants)
 
 	}catch(err){
 		next(err)
@@ -28,19 +28,12 @@ router.get('/', async (req, res, next) => {
 router.get('/:place_id', async (req, res, next) => {
 	try {
 
-
-// if mongoDB restaurant it === Restaurant.findOne({place_id: req.params.place_id});
-		const restaurantId = Restaurant.find
-
 		console.log('+++++++++++++++++++++++++++++');
-		console.log('HITTING ROUTE GET /:ID');
+		console.log('HITTING restaurants GET /:ID ROUTE');
 		console.log('==============================');
-		console.log('this is req.body: ', req.session);
-
-
+		console.log('this is req.body: ', req.body);
 
 		const response = await fetch('https://maps.googleapis.com/maps/api/place/details/json?placeid=' + req.params.place_id + '&fields=opening_hours,periods,close,time&key=' + apiKey);
-
 
 		response = JSON.stringify(response);
 
@@ -60,6 +53,29 @@ router.get('/:place_id', async (req, res, next) => {
 	}
 });
 ///END of GET '/:id' restaurants show route///
+
+router.post('/:place_id', async (req, res, next) => {
+	try{
+
+		// if mongoDB restaurant it === Restaurant.findOne({place_id: req.params.place_id});
+
+		const restaurantId = await Restaurant.findOne({place_id: req.params.place_id});
+
+		if (restaurantId/* === Restaurant.findOne({place_id: req.params.place_id})*/){
+
+			/// I think I need to compare the restaurantId ^^^ variable to another instance ///
+
+			const createdRestaurant = Restaurant.create(req.body);
+			console.log('==================');
+			console.log(`${createdRestaurant} <==== createdRestaurant in GET'/restaurant/:place_id ROUTE`);
+			console.log('==================');
+
+		}
+
+	}catch(err){
+		next(err)
+	}
+})
 
 
 module.exports = router;

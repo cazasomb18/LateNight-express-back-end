@@ -6,7 +6,10 @@ const restaurantSchema = new mongoose.Schema({
 	name: String,
 	address: String,
 	place_id: String,
-	// comments: comments.populate(); --> will have to do some research, some logic here that makes this model aware of the other model's structure
+	comments: [{
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'Comment'
+	}]
 });
 
 // console.log("");
