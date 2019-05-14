@@ -10,16 +10,16 @@ const restaurantSchema = new mongoose.Schema({
 	// openNow: Boolean
 });
 
-console.log("");
-console.log("");
-console.log("");
-console.log("THIS IS THE RESTAURANT SCHEMA: ");
+// console.log("");
+// console.log("");
+// console.log("");
+// console.log("THIS IS THE RESTAURANT SCHEMA: ", restaurantSchema);
 
-const Restaurants = mongoose.model('Restaurant', restaurantSchema);
+const Restaurant = mongoose.model('Restaurant', restaurantSchema);
 
-console.log("");
-console.log("");
-console.log("");
-console.log("THIS IS THE RESTAURANT MODEL: ");
+// console.log("");
+// console.log("");
+// console.log("");
+// console.log("THIS IS THE RESTAURANT MODEL: ", Restaurant);
 
-module.exports = Restaurants;
+module.exports = Restaurant;

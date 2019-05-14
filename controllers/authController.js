@@ -31,7 +31,7 @@ router.post('/', async (req, res, next) => {
 })
 
 /// POST auth/register login user that isn't already logged in///
-router.post('/login', async (req, res) => {
+router.post('/login', async (req, res, next) => {
 	const foundUser = await User.findOne({userName: req.body.userName});
 	if(foundUser) {
 		if(bcrypt.compareSync(req.body.password, foundUser.password)) {
@@ -72,7 +72,7 @@ router.post('/register', async (req, res, next) => {
 			console.log("This username is already in use. Please select another");
 		} else {
 			const password = req.body.password;
-			console.log(password);
+			console.log(password);			
 			const passwordHash = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
 			const userEntry = {};
 			userEntry.userName = req.body.userName;
@@ -108,7 +108,7 @@ router.get('/logout', (req, res, next) => {
 			})
 		}
 	})	
-})
+});
 /// END of auth/logout route (destroy session) ///
 
 
