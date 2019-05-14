@@ -34,9 +34,17 @@ router.get('/:id', async (req, res, next) => {
 
 		const response = await fetch('https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=41.8781,-87.6298&radius=5000&type=restaurant&keyword=open&keyword=late&key=' + apiKey);
 
-		for (let i = 0; i > response.length; i++){
+		console.log('===========THIS IS RESPONSE++++++++++++');
+		console.log(response);
+		console.log('===========THIS IS RESPONSE++++++++++++');
 
-			let placeId = response.length.results[i].place_id;
+		console.log('===========THIS IS RESPONSE.BODY++++++++++++');
+		console.log(response.body);
+		console.log('===========THIS IS RESPONSE.BODY++++++++++++');
+
+		for (let i = 0; i > response.body.length; i++){
+
+			let placeId = response.body.length.results[i].place_id;
 
 			// return placeId;
 
