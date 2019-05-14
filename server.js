@@ -41,9 +41,11 @@ app.use(cors(corsOptions));
 
 const restaurantController = require('./controllers/restaurantController.js');
 const authController = require('./controllers/authController.js');
+const commentController = require('./controllers/commentController.js');
 
 app.use('/restaurants', restaurantController);
 app.use('/auth', authController);
+app.use('/comment', commentController);
 
 
 app.listen(process.env.PORT || 9000, () => {
