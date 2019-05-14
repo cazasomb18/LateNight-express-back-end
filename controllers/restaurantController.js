@@ -66,6 +66,12 @@ router.post('/:place_id', async (req, res, next) => {
 			/// I think I need to compare the restaurantId ^^^ variable to another instance ///
 
 			const createdRestaurant = Restaurant.create(req.body);
+
+			newRestaurant = createdRestaurant;
+			newRestaurant = await Restaurant.find({})
+			.populate('owner')
+			.exec();
+
 			console.log('==================');
 			console.log(`${createdRestaurant} <==== createdRestaurant in GET'/restaurant/:place_id ROUTE`);
 			console.log('==================');
