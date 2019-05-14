@@ -5,9 +5,9 @@ const connectionString = 'mongodb://localhost/lateNight'
 const restaurantSchema = new mongoose.Schema({
 	name: String,
 	address: String,
-	openLate: Boolean,
+	// openLate: Boolean,
 	//if opening_hours > 2200x
-	openNow: Boolean
+	// openNow: Boolean
 });
 
 console.log("");
