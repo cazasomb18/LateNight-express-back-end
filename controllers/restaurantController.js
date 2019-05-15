@@ -1,9 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const Restaurant = require('../models/restaurant');
+const Comment = require('../models/comment')
 require('isomorphic-fetch');
 require('es6-promise').polyfill();
 const apiKey = 'AIzaSyCbQ8Y7CHZUWrnEGUCqC8fNR4Kw1dfk5AE';
+
+
+//// PURPOSE OF THIS ROUTE = INITIAL API FETCH TO RETURN ALL RESTAURANTS IN 
+//// CHICAGO W/IN 5KM RADIUS W/ KEYWORDS: 'LATE' + 'NIGHT'///////////////////
 
 /// GET '/' restaurants index - returns all restaurants in Chicago ///
 router.get('/', async (req, res, next) => {
@@ -24,9 +29,15 @@ router.get('/', async (req, res, next) => {
 });
 /////////////// END of GET '/' restaurants show route//////////////
 
-///////////////GET '/:id' restaurants show route -- returns details about restaurants (hours >2200, name, address)
+
+///PURPOSE OF THIS ROUTE = GATHER PLACE_ID IN ORDER TO FETCH 2ND API CALL WHICH WILL RETURN
+///DETAILED INFORMATION ABOUT THAT PARTICULAR RESTAURANT THE USER SELECTED/////////
+
+///////////////GET '/:id' restaurants show route -- returns details about restaurants
 router.get('/:place_id', async (req, res, next) => {
 	try {
+
+		console.log(req.session, "this is req.session");
 
 		console.log('+++++++++++++++++++++++++++++');
 		console.log('HITTING restaurants GET /:ID ROUTE');
@@ -52,33 +63,71 @@ router.get('/:place_id', async (req, res, next) => {
 });
 //////////////////////END of GET '/:place_id' restaurants show route//////////////////////
 
+//// DO I NEED ANOTHER RESTAURANT POST ROUTE WHICH WILL CREATE THE DB ENTRY?
 
+/// THEN THIS ROUTE BELOW WILL HAVE THE SOLE FUNCTION .POPULATING THE COMMENTS TO RESTAURANT/PLACE_ID?
+
+
+///PURPOSE OF THIS ROUTE = 1.) create mongoDB entry when route is hit 
+///						   2.) populate comments on that db entry
 /////////////////////start of POST '/:place_id/comment' restaurants route///////////////
 router.post('/:place_id/comment', async (req, res, next) => {
 	try{
 
-		// if mongoDB restaurant it === Restaurant.findOne({place_id: req.params.place_id});
-
-		const createdRestaurant = await Restaurant.create(req.body);
-
-		createdRestaurant = await Restaurant.find({})
-		.populate('comments')
-		.exec();
-
-		const restaurantId = await Restaurant.findOne({place_id: req.params.place_id});
-
-		if (restaurantId/* === Restaurant.findOne({place_id: req.params.place_id})*/){
-
-			/// I think I need to compare the restaurantId ^^^ variable to another instance ///
+		console.log('===========================');
+		console.log('HITTING POST ROUTE RESTAURANT/PLACE_ID/COMMENT');
+		console.log('===========================');
 
 
-			console.log('==================');
-			console.log(`${createdRestaurant} <==== createdRestaurant in GET'/restaurant/:place_id ROUTE`);
-			console.log('==================');
+		let theRestaurant;
 
-			res.json(createdRestaurant);
+		const foundRestaurant = await Restaurant.findOne({place_id: req.body.place_id})
 
+		console.log("Found Restaurant: ", foundRestaurant);
+		///find mongoDB entry after created and populate with/comments
+
+		// const restaurantId = await Restaurant.findOne({place_id: req.params.place_id});
+		///get place_id from mongoDB and store it in restaurantId variable
+
+		if(!foundRestaurant) {
+			///create mongoDB entry when route is hit
+			const createdRestaurant = await Restaurant.create({
+				name: req.body.name,
+				address: req.body.address,
+				place_id:req.body.place_id
+			});
+			console.log("Created Restaurant: ", createdRestaurant);
+			theRestaurant = createdRestaurant;
+		} 
+
+		else {
+			theRestaurant = foundRestaurant			
 		}
+
+		const createdComment = await Comment.create(req.body);
+
+		console.log(theRestaurant);
+
+		theRestaurant.comments.push(createdComment);
+
+		await theRestaurant.save();
+
+
+		// if ( restaurantId === await Restaurant.findOne({place_id: req.params.place_id}) ) {
+		// 	/// if place_id === mongoDB place_id
+
+		// 	///then log the following to console...
+
+
+		// 	console.log('==================');
+		// 	console.log(`${createdRestaurant} <==== createdRestaurant in GET'/restaurant/:place_id ROUTE`);
+		// 	console.log('==================');
+
+		// 	JSON.stringify(createdRestaurant)
+
+			res.status(200).json(theRestaurant);
+		// 	/// and stringify/ send res.json...
+		// }
 
 	}catch(err){
 		next(err)

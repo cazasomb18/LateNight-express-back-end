@@ -9,8 +9,8 @@ const session 			= require('express-session');
 
 /// require models ///
 const User 				= require('../models/user.js');
-const Comment = require('../models/comment.js');
-const Restaurant = require('../models/restaurant.js');
+const Comment 			= require('../models/comment.js');
+const Restaurant 		= require('../models/restaurant.js');
 /// require models ///
 
 
@@ -43,73 +43,81 @@ router.get('/restaurants/:place_id', async (req, res, next) => {
 ///END of comment GET '/restaurants/show' ROUTE ///
 
 
-///PURPOSE OF THIS ROUTE IS TO POST COMMENTS ON 
+///PURPOSE OF THIS ROUTE IS TO POST COMMENTS ON A RESTAURANT ACCORDING TO PLACE_ID
 /// start of comment POST '/:id' ROUTE ///
-router.post('restaurants/:place_id', async (req, res, next) => {
-	try{
+// router.post('/restaurants/:place_id', async (req, res, next) => {
+// 	try{
 
-		console.log("==============================");
-		console.log('HITTING COMMENT POST ROUTE ON RESTAURANTS/:ID ENDPOINT');
-		console.log("==============================");
+// 		console.log("==============================");
+// 		console.log('HITTING COMMENT POST ROUTE ON RESTAURANTS/:ID ENDPOINT');
+// 		console.log("==============================");
 
-		console.log('This is req.session', req.session);
+// 		console.log('This is req.session', req.session);
 
-		if ((req.session.logged = true) && (req.session.userName = req.body.userName)){
+// 		// if ( (req.session.logged = true) && (req.session.userName = req.body.userName) ) {
 
-			const createdComment = await Comment.create(req.body);
+// 			const createdComment = await Comment.create(req.body);
 
-			const foundRestaurant = await Restaurant.findById(req.params.id);
+// 			const foundRestaurant = await Restaurant.findById({_id: req.params.id});
 
-			const commentLocation = await foundRestaurant.comments;
+// 			const commentLocation = await foundRestaurant.comments;
 
-			commentLocation.push(createdComment);
+// 			commentLocation.push(createdComment);
 
-			console.log("==============================");
-			console.log('this is the comment location: ');
-			console.log(commentLocation);
-			console.log("==============================");
+// 			console.log("==============================");
+// 			console.log('this is the comment location: ');
+// 			console.log(commentLocation);
+// 			console.log("==============================");
 
-			await foundRestaurant.save();
+// 			await foundRestaurant.save();
 
-		};
+// 			res.json({
 
-		res.json({
-			status: 200,
-			data: 'Comment posted successfully'
+// 				status: 200,
+// 				data: 'Comment posted successfully'
 
-		});
+// 			});
 
-	}catch(err){
+// 		// } else {
+// 		// 	res.json({
+// 		// 		status: 400,
+// 		// 		data: 'You must be logged in to post a comment'
+// 		// 	})
+// 		// }
 
-		next(err)
-	}
 
-});
+// 	}catch(err){
+// 		next(err)
+// 	}
+
+// });
 /////////////////// END of comment POST '/:id' ROUTE ///////////////////
 
 
 //////PURPOSE OF THIS ROUTE IS FOR USERS TO EDIT COMMENTS///////
-/////////////start of comment EDIT '/:id' ROUTE /////////////
-router.put('restaurants/:place_id/edit', async (req, res, next) => {
+/////////////start of comment PUT '/:place_id/edit' ROUTE /////////////
+router.put('/restaurants/:place_id/edit', async (req, res, next) => {
 	try{
 		const updatedComment = await Comment.findByIdAndUpdate(req.params.id, req.body, {new: true});
+
 		console.log("==================");
 		console.log(`${updatedComment}, <=========== has been found in comment PUT '/:id/edit ROUTE`);
 		console.log("==================");
+
 		res.json({
 			status: 200,
-			data: foundComment
+			data: updatedComment
 		})
 	}catch{
 		next(err)
 	}
 });
-/////////////// END of comment EDIT '/:id' ROUTE ///////////////
+///////////////////// END of comment EDIT '/:id' ROUTE /////////////////////
 
 
 ///PURPOSE OF THIS ROUTE IS TO DELETE COMMENTS MADE BY A USER//////
 /////////////// comment DELETE '/:id' ROUTE ///////////////
-router.delete('restaurants/:place_id', async (req, res) => {
+router.delete('/restaurants/:place_id', async (req, res) => {
 	try{
 		const deletedComment = await Comment.findByIdAndRemove(req.params.id);
 		console.log("+++++++++++++++++++++++");
