@@ -13,8 +13,11 @@ const Comment = require('../models/comment.js');
 const Restaurant = require('../models/restaurant.js');
 /// require models ///
 
+
+
+///FUNCTION OF THIS ROUTE IS TO GET ALL COMMENTS MADE ON A PARTICULAR RESTAURANT///
 ///start of comment GET '/restaurants/show' ROUTE ///
-router.get('/restaurants/:id', async (req, res, next) => {
+router.get('/restaurants/:place_id', async (req, res, next) => {
 	try {
 		console.log('This is req.session', req.session);
 
@@ -40,8 +43,9 @@ router.get('/restaurants/:id', async (req, res, next) => {
 ///END of comment GET '/restaurants/show' ROUTE ///
 
 
+///PURPOSE OF THIS ROUTE IS TO POST COMMENTS ON 
 /// start of comment POST '/:id' ROUTE ///
-router.post('restaurants/:id', async (req, res, next) => {
+router.post('restaurants/:place_id', async (req, res, next) => {
 	try{
 
 		console.log("==============================");
@@ -58,7 +62,7 @@ router.post('restaurants/:id', async (req, res, next) => {
 
 			const commentLocation = await foundRestaurant.comments;
 
-			commentLocation.push(comment);
+			commentLocation.push(createdComment);
 
 			console.log("==============================");
 			console.log('this is the comment location: ');
@@ -81,10 +85,12 @@ router.post('restaurants/:id', async (req, res, next) => {
 	}
 
 });
-/// END of comment POST '/:id' ROUTE ///
+/////////////////// END of comment POST '/:id' ROUTE ///////////////////
 
-///start of comment EDIT '/:id' ROUTE ///
-router.put('restaurants/:id/edit', async (req, res, next) => {
+
+//////PURPOSE OF THIS ROUTE IS FOR USERS TO EDIT COMMENTS///////
+/////////////start of comment EDIT '/:id' ROUTE /////////////
+router.put('restaurants/:place_id/edit', async (req, res, next) => {
 	try{
 		const updatedComment = await Comment.findByIdAndUpdate(req.params.id, req.body, {new: true});
 		console.log("==================");
@@ -98,10 +104,12 @@ router.put('restaurants/:id/edit', async (req, res, next) => {
 		next(err)
 	}
 });
-/// END of comment EDIT '/:id' ROUTE ///
+/////////////// END of comment EDIT '/:id' ROUTE ///////////////
 
-/// comment DELETE '/:id' ROUTE ///
-router.delete('restaurants/:id', async (req, res) => {
+
+///PURPOSE OF THIS ROUTE IS TO DELETE COMMENTS MADE BY A USER//////
+/////////////// comment DELETE '/:id' ROUTE ///////////////
+router.delete('restaurants/:place_id', async (req, res) => {
 	try{
 		const deletedComment = await Comment.findByIdAndRemove(req.params.id);
 		console.log("+++++++++++++++++++++++");
@@ -112,8 +120,7 @@ router.delete('restaurants/:id', async (req, res) => {
 		next(err)
 	}
 });
-/// END of DELETE '/:id' ROUTE ///
+////////////////// END of DELETE '/:id' ROUTE //////////////////
 
 
 module.exports = router;
-

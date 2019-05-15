@@ -22,20 +22,18 @@ router.get('/', async (req, res, next) => {
 		next(err)
 	}
 });
-/// END of GET '/' restaurants show route///
+/////////////// END of GET '/' restaurants show route//////////////
 
-//GET '/:id' restaurants show route -- returns details about restaurants (hours >2200, name, address)
+///////////////GET '/:id' restaurants show route -- returns details about restaurants (hours >2200, name, address)
 router.get('/:place_id', async (req, res, next) => {
 	try {
 
 		console.log('+++++++++++++++++++++++++++++');
 		console.log('HITTING restaurants GET /:ID ROUTE');
-		console.log('==============================');
 		console.log('this is req.body: ', req.body);
+		console.log('==============================');
 
-		const response = await fetch('https://maps.googleapis.com/maps/api/place/details/json?placeid=' + req.params.place_id + '&fields=opening_hours,periods,close,time&key=' + apiKey);
-
-		response = JSON.stringify(response);
+		const response = await fetch('https://maps.googleapis.com/maps/api/place/details/json?placeid=' + req.params.place_id + '&fields=opening_hours/periods&key=' + apiKey);
 
 		console.log('===========THIS IS RESPONSE++++++++++++');
 		console.log(response);
@@ -52,12 +50,20 @@ router.get('/:place_id', async (req, res, next) => {
 		next(err)
 	}
 });
-///END of GET '/:place_id' restaurants show route///
+//////////////////////END of GET '/:place_id' restaurants show route//////////////////////
 
-router.post('/:place_id', async (req, res, next) => {
+
+/////////////////////start of POST '/:place_id/comment' restaurants route///////////////
+router.post('/:place_id/comment', async (req, res, next) => {
 	try{
 
 		// if mongoDB restaurant it === Restaurant.findOne({place_id: req.params.place_id});
+
+		const createdRestaurant = await Restaurant.create(req.body);
+
+		createdRestaurant = await Restaurant.find({})
+		.populate('comments')
+		.exec();
 
 		const restaurantId = await Restaurant.findOne({place_id: req.params.place_id});
 
@@ -65,12 +71,6 @@ router.post('/:place_id', async (req, res, next) => {
 
 			/// I think I need to compare the restaurantId ^^^ variable to another instance ///
 
-			const createdRestaurant = Restaurant.create(req.body);
-
-			newRestaurant = createdRestaurant;
-			newRestaurant = await Restaurant.find({})
-			.populate('owner')
-			.exec();
 
 			console.log('==================');
 			console.log(`${createdRestaurant} <==== createdRestaurant in GET'/restaurant/:place_id ROUTE`);
@@ -84,6 +84,7 @@ router.post('/:place_id', async (req, res, next) => {
 		next(err)
 	}
 });
+/////////////////////END of POST '/:place_id/comment' restaurants route///////////////
 
 
 module.exports = router;
