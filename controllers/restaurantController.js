@@ -73,7 +73,6 @@ router.get('/:place_id', async (req, res, next) => {
 /////////////////////start of POST '/:place_id/comment' restaurants route///////////////
 router.post('/:place_id/comment', async (req, res, next) => {
 	try{
-
 		console.log('===========================');
 		console.log('HITTING POST ROUTE RESTAURANT/PLACE_ID/COMMENT');
 		console.log('===========================');
@@ -81,7 +80,7 @@ router.post('/:place_id/comment', async (req, res, next) => {
 
 		let theRestaurant;
 
-		const foundRestaurant = await Restaurant.findOne({place_id: req.body.place_id})
+		const foundRestaurant = await Restaurant.findOne({place_id: req.params.place_id})
 
 		console.log("Found Restaurant: ", foundRestaurant);
 		///find mongoDB entry after created and populate with/comments
@@ -92,19 +91,26 @@ router.post('/:place_id/comment', async (req, res, next) => {
 		if(!foundRestaurant) {
 			///create mongoDB entry when route is hit
 			const createdRestaurant = await Restaurant.create({
+
 				name: req.body.name,
 				address: req.body.address,
-				place_id:req.body.place_id
+				place_id: req.params.place_id
+
 			});
 			console.log("Created Restaurant: ", createdRestaurant);
 			theRestaurant = createdRestaurant;
 		} 
 
 		else {
-			theRestaurant = foundRestaurant			
+			theRestaurant = foundRestaurant
 		}
 
-		const createdComment = await Comment.create(req.body);
+		const createdComment = await Comment.create({
+
+			commentBody: req.body.commentBody,
+			commentAuthor: req.body.commentAuthor
+
+		});
 
 		console.log(theRestaurant);
 
@@ -125,7 +131,7 @@ router.post('/:place_id/comment', async (req, res, next) => {
 
 		// 	JSON.stringify(createdRestaurant)
 
-			res.status(200).json(theRestaurant);
+			res.status(200).json({restaurant: theRestaurant, newComment: createdComment});
 		// 	/// and stringify/ send res.json...
 		// }
 
