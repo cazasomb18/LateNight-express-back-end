@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const Restaurant = require('../models/restaurant');
 const Comment = require('../models/comment')
-const superagent = require('superagent');
 require('isomorphic-fetch');
 require('es6-promise').polyfill();
 // const apiKey = 'AIzaSyCbQ8Y7CHZUWrnEGUCqC8fNR4Kw1dfk5AE';
@@ -31,27 +30,22 @@ router.get('/', async (req, res, next) => {
 });
 /////////////// END of GET '/' restaurants show route//////////////
 
-
 ///PURPOSE OF THIS ROUTE = GATHER PLACE_ID IN ORDER TO FETCH 2ND API CALL WHICH WILL RETURN
 ///DETAILED INFORMATION ABOUT THAT PARTICULAR RESTAURANT THE USER SELECTED/////////
 
 ///////////////GET '/:id' restaurants show route -- returns details about restaurants
 router.get('/:place_id', async (req, res, next) => {
 	try {
-
 		console.log(req.session, "this is req.session")
-
 		console.log('+++++++++++++++++++++++++++++')
 		console.log('HITTING restaurants GET /:place_ID ROUTE')
 		console.log('this is req.body: ', req.body)
 		console.log('==============================')
-
 		const response = await fetch('https://maps.googleapis.com/maps/api/place/details/json?placeid=' + req.params.place_id + '&fields=opening_hours/periods&key=' + process.env.API_KEY)
 
 		console.log('===========THIS IS RESPONSE++++++++++++')
 		console.log(response);
 		console.log('===========THIS IS RESPONSE++++++++++++')
-
 
 		const parsedRestDeetResponse = await response.json();
 
@@ -79,18 +73,12 @@ router.post('/:place_id/comment', async (req, res, next) => {
 		console.log('===========================');
 		console.log('HITTING POST ROUTE RESTAURANT/PLACE_ID/COMMENT');
 		console.log('===========================');
-
-
 		let theRestaurant;
-
-		const foundRestaurant = await Restaurant.findOne({place_id: req.params.place_id})
-
+		const foundRestaurant = await Restaurant.findOne({place_id: req.params.place_id});
 		console.log("Found Restaurant: ", foundRestaurant);
 		///find mongoDB entry after created and populate with/comments
-
-		// const restaurantId = await Restaurant.findOne({place_id: req.params.place_id});
+		const restaurantId = await Restaurant.findOne({place_id: req.params.place_id});
 		///get place_id from mongoDB and store it in restaurantId variable
-
 		if(!foundRestaurant) {
 			///create mongoDB entry when route is hit
 			const createdRestaurant = await Restaurant.create({
@@ -99,47 +87,41 @@ router.post('/:place_id/comment', async (req, res, next) => {
 				address: req.body.address,
 				place_id: req.params.place_id
 
-			});
-			console.log("Created Restaurant: ", createdRestaurant);
+			})
 			theRestaurant = createdRestaurant;
-		} 
+			console.log("Created Restaurant: ", createdRestaurant);
+		} else {
+			theRestaurant = foundRestaurant;
+			const createdComment = await Comment.create({
 
-		else {
-			theRestaurant = foundRestaurant
+					commentBody: req.body.commentBody,
+					commentAuthor: req.body.commentAuthor
+
+				})
+			console.log(theRestaurant);
+			theRestaurant.comments.push(createdComment);
+			await theRestaurant.save();
+			}; 
+			if (restaurantId === await Restaurant.findOne({place_id: req.params.place_id})){
+				////// if place_id === mongoDB place_id//////
+				///then log the following to console...///
+				console.log('======================================================');
+				console.log(`${createdRestaurant} <==== createdRestaurant in GET'/restaurant/:place_id ROUTE`);
+				console.log('======================================================');
+				JSON.stringify(createdRestaurant);
+				res.status(200).json({
+						restaurant: theRestaurant, newComment: createdComment
+				});
+				/// and stringify/ send res.json...
+		} else {
+			console.log('=======================');
+			console.log('no restaurant ID found!');
+			console.log('=======================');
 		}
-
-		const createdComment = await Comment.create({
-
-			commentBody: req.body.commentBody,
-			commentAuthor: req.body.commentAuthor
-
-		});
-
-		console.log(theRestaurant);
-
-		theRestaurant.comments.push(createdComment);
-
-		await theRestaurant.save();
-
-
-		if ( restaurantId === await Restaurant.findOne({place_id: req.params.place_id}) ) {
-			/// if place_id === mongoDB place_id
-
-			///then log the following to console...
-
-
-			console.log('==================');
-			console.log(`${createdRestaurant} <==== createdRestaurant in GET'/restaurant/:place_id ROUTE`);
-			console.log('==================');
-
-			JSON.stringify(createdRestaurant)
-
-			res.status(200).json({restaurant: theRestaurant, newComment: createdComment});
-		// 	/// and stringify/ send res.json...
-		// }
-
-	}catch(err){
-		next(err)
+	}catch(err) {
+		next(err);
+		console.error(err);
+		console.log(err);
 	}
 });
 /////////////////////END of POST '/:place_id/comment' restaurants route///////////////
