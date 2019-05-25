@@ -3,6 +3,9 @@ const app				= express();
 const bodyParser		= require('body-parser');
 const cors				= require('cors');
 const session			= require('express-session');
+
+require('dotenv').config();
+
 require('isomorphic-fetch');
 require('es6-promise').polyfill();
 
@@ -19,20 +22,43 @@ app.use(session({
 //// SET UP MIDDLEWARE, ANY CLIENT CAN MAKE REQUEST TO SERVER///
 app.use(bodyParser.urlencoded({
 	extended: false
-	}));
+}));
 
 
 app.use(bodyParser.urlencoded({extended: false}));
 
 app.use(bodyParser.json());
 
+
+// const urlList = ['http://localhost:3000', fetchOne];
+
 const corsOptions = {
-	origin: 'http://localhost:3001',
-	credentials: true,
-	optionsSuccessStatus: 200
+	origin: 'http://localhost:3000',
+	optionsSuccessStatus: 200,
+	credentials: true
 }
 
+// app.use(cors({
+// 	origin: 'http://localhost:3000',
+// 	optionsSuccessStatus: 200,
+// 	credentials: true
+// }));
+
 app.use(cors(corsOptions));
+
+// app.use(cors({
+// 	origin: function(origin, callback){
+// 		if(urlList.indexOf(origin) !== -1){
+// 			callback(null, true)
+// 		} else{
+// 			callback(new Error('URL not authorized by cors'))
+// 		}
+
+// 	},
+// 	optionsSuccessStatus: 200,
+// 	credentials: true
+// }));
+
 
 
 

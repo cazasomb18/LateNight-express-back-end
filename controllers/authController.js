@@ -11,7 +11,7 @@ const User 				= require('../models/user.js');
 
 
 
-
+///////registration post route --- creates a new user in DB//////
 router.post('/', async (req, res, next) => {
 	console.log(req.session, ' <======= this is session');
 	try {
@@ -22,38 +22,48 @@ router.post('/', async (req, res, next) => {
 
 		res.json({
 			status: 200,
-			data: 'login successful'
+			data: 'register successful'
 		});
 	}catch (err){
 		console.log(err);
-		res.next(err);
+		next(err);
 	}
 });
+///////END OF registration POST route --- creates a new user in DB//////
 
-/// POST auth/register login user that isn't already logged in///
+/// POST auth/login --> login user that isn't already logged in///
 router.post('/login', async (req, res, next) => {
+	console.log('hitting POST ROUTE AUTH/LOGIN');
+	//this should be find by id//
 	const foundUser = await User.findOne({userName: req.body.userName});
 	if(foundUser) {
 		if(bcrypt.compareSync(req.body.password, foundUser.password)) {
+			console.log('User has been found: ', foundUser);
+///YOU WERE CONSIDERING CHANGING ABOVE  ^^^ (req.body.password, foundUser.password)////////
 			req.session.userName = req.body.userName;
 			req.session.logged = true;
 			req.session.message = undefined
 			res.json({
 				status: 200,
-				data: foundUser
+				data: foundUser,
+				success: true
 			})
+			console.log('hitting POST ROUTE AUTH/LOGIN');
+			console.log(res.json);
 		} else {
 			req.session.message = "Username or password were incorrect"
 			res.json({
 				status: 400,
-				data: "Login failed. Username or password were incorrect"
+				data: "Login failed. Username or password were incorrect",
+				success: false
 			})
 		}
 	} else {
-		req.session.message = "There were no users under that username. Please register."
+		req.session.message = "There were no users under that name. Please register.",
 		res.json({
 			status: 200,
-			data: "There were no users under that username. Please register."
+			data: "There were no users under that username. Please register.",
+			success: false
 		})
 
 	}
@@ -65,11 +75,12 @@ router.post('/login', async (req, res, next) => {
 /// POST /auth/register --> sees if user exists and creates new one
 router.post('/register', async (req, res, next) => {
 	try {
-		console.log('hitting route');
+		console.log('hitting POST route auth/register');
 		const userCheck = await User.findOne({userName: req.body.userName});
 		if(userCheck) {
-			req.session.message = "This username is already in use. Please select another"
-			console.log("This username is already in use. Please select another");
+			req.session.message = "This username is already in use.";
+			console.log(req.session.message);
+			console.log("This username is already in use.");
 		} else {
 			const password = req.body.password;
 			console.log(password);			
@@ -85,7 +96,8 @@ router.post('/register', async (req, res, next) => {
 			req.session.message = undefined;
 			res.json({
 				status: 200,
-				data: user
+				data: user,
+				success: false
 			})
 		}
 	} catch(err) {

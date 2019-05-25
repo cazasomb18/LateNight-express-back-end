@@ -8,10 +8,10 @@ const commentSchema = new mongoose.Schema({
 	/// will probably need to change the format of this to actually grab the mongoDB id for the restaurant///
 });
 
-console.log("This is the comment Schema: ", commentSchema);
+// console.log("This is the comment Schema: ", commentSchema);
 
 const Comment = mongoose.model('Comment', commentSchema);
 
-console.log("This is the Comment Model: ", Comment);
+// console.log("This is the Comment Model: ", Comment);
 
 module.exports = Comment;

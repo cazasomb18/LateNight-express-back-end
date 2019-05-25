@@ -2,9 +2,10 @@ const express = require('express');
 const router = express.Router();
 const Restaurant = require('../models/restaurant');
 const Comment = require('../models/comment')
+const superagent = require('superagent');
 require('isomorphic-fetch');
 require('es6-promise').polyfill();
-const apiKey = 'AIzaSyCbQ8Y7CHZUWrnEGUCqC8fNR4Kw1dfk5AE';
+// const apiKey = 'AIzaSyCbQ8Y7CHZUWrnEGUCqC8fNR4Kw1dfk5AE';
 
 
 //// PURPOSE OF THIS ROUTE = INITIAL API FETCH TO RETURN ALL RESTAURANTS IN 
@@ -13,7 +14,7 @@ const apiKey = 'AIzaSyCbQ8Y7CHZUWrnEGUCqC8fNR4Kw1dfk5AE';
 /// GET '/' restaurants index - returns all restaurants in Chicago ///
 router.get('/', async (req, res, next) => {
 	try{
-		const response = await fetch('https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=41.8781,-87.6298&radius=5000&type=restaurant&keyword=open&keyword=late&key=' + apiKey);
+		const response = await fetch('https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=41.8781,-87.6298&radius=5000&type=restaurant&keyword=open&keyword=late&key=' + process.env.API_KEY);
 
 		console.log('this is req.body: ', req.body);
 
@@ -24,6 +25,7 @@ router.get('/', async (req, res, next) => {
 		res.json(allRestaurants)
 
 	}catch(err){
+
 		next(err)
 	}
 });
@@ -37,28 +39,29 @@ router.get('/', async (req, res, next) => {
 router.get('/:place_id', async (req, res, next) => {
 	try {
 
-		console.log(req.session, "this is req.session");
+		console.log(req.session, "this is req.session")
 
-		console.log('+++++++++++++++++++++++++++++');
-		console.log('HITTING restaurants GET /:ID ROUTE');
-		console.log('this is req.body: ', req.body);
-		console.log('==============================');
+		console.log('+++++++++++++++++++++++++++++')
+		console.log('HITTING restaurants GET /:place_ID ROUTE')
+		console.log('this is req.body: ', req.body)
+		console.log('==============================')
 
-		const response = await fetch('https://maps.googleapis.com/maps/api/place/details/json?placeid=' + req.params.place_id + '&fields=opening_hours/periods&key=' + apiKey);
+		const response = await fetch('https://maps.googleapis.com/maps/api/place/details/json?placeid=' + req.params.place_id + '&fields=opening_hours/periods&key=' + process.env.API_KEY)
 
-		console.log('===========THIS IS RESPONSE++++++++++++');
+		console.log('===========THIS IS RESPONSE++++++++++++')
 		console.log(response);
-		console.log('===========THIS IS RESPONSE++++++++++++');
+		console.log('===========THIS IS RESPONSE++++++++++++')
 
 
-		const restaurantDetails = await response.json();
+		const parsedRestDeetResponse = await response.json();
 
-		JSON.stringify(restaurantDetails);
+		JSON.stringify(parsedRestDeetResponse);
 
-		res.json(restaurantDetails);
+		res.json(parsedRestDeetResponse);
 
 	}catch(err){
-		next(err)
+		console.log(err);
+		console.error(err);
 	}
 });
 //////////////////////END of GET '/:place_id' restaurants show route//////////////////////
@@ -119,17 +122,17 @@ router.post('/:place_id/comment', async (req, res, next) => {
 		await theRestaurant.save();
 
 
-		// if ( restaurantId === await Restaurant.findOne({place_id: req.params.place_id}) ) {
-		// 	/// if place_id === mongoDB place_id
+		if ( restaurantId === await Restaurant.findOne({place_id: req.params.place_id}) ) {
+			/// if place_id === mongoDB place_id
 
-		// 	///then log the following to console...
+			///then log the following to console...
 
 
-		// 	console.log('==================');
-		// 	console.log(`${createdRestaurant} <==== createdRestaurant in GET'/restaurant/:place_id ROUTE`);
-		// 	console.log('==================');
+			console.log('==================');
+			console.log(`${createdRestaurant} <==== createdRestaurant in GET'/restaurant/:place_id ROUTE`);
+			console.log('==================');
 
-		// 	JSON.stringify(createdRestaurant)
+			JSON.stringify(createdRestaurant)
 
 			res.status(200).json({restaurant: theRestaurant, newComment: createdComment});
 		// 	/// and stringify/ send res.json...

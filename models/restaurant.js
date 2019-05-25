@@ -14,14 +14,14 @@ const restaurantSchema = new mongoose.Schema({
 
 // console.log("");
 // console.log("");
-console.log("");
-console.log("THIS IS THE RESTAURANT SCHEMA: ", restaurantSchema);
+// console.log("");
+// console.log("THIS IS THE RESTAURANT SCHEMA: ", restaurantSchema);
 
 const Restaurant = mongoose.model('Restaurant', restaurantSchema);
 
 // console.log("");
 // console.log("");
-console.log("");
-console.log("THIS IS THE RESTAURANT MODEL: ", Restaurant);
+// console.log("");
+// console.log("THIS IS THE RESTAURANT MODEL: ", Restaurant);
 
 module.exports = Restaurant;

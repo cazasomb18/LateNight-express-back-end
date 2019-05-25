@@ -31,11 +31,11 @@ router.get('/restaurants/:place_id', async (req, res, next) => {
 		console.log(foundRestaurant);
 
 		if (foundRestaurant){
-			const foundComments = await Comment.find({_id: req.params.id});
+			const foundComments = await Comment.findById({_id: req.params.id});
 			// const foundComments = await Comment.findById(req.params.id);
 
 			console.log("================");
-			console.log(foundComments + " <====== comments have been found in the GET restaurants/:place_id route");
+			console.log(foundComments + " <====== comments found on " + + " GET restaurants/:place_id route");
 			console.log("================");
 
 		} else {
