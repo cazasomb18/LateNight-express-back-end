@@ -6,6 +6,9 @@ const session			= require('express-session');
 
 require('dotenv').config();
 
+const apiKey = process.env.API_KEY;
+
+
 require('isomorphic-fetch');
 require('es6-promise').polyfill();
 
@@ -29,27 +32,38 @@ app.use(bodyParser.urlencoded({extended: false}));
 
 app.use(bodyParser.json());
 
-const fetchOne = 'https://maps.googleapis.com/maps/api/place/findplacefromtext/json?key=' + process.env.API_KEY + '&input=late%20night%20restaurants&inputtype=textquery&locationbias=ipbias';
-
-
+const fetchOne = 'https://maps.googleapis.com/maps/api/place/findplacefromtext/json?key=' + apiKey + '&input=late%20night%20restaurants&inputtype=textquery&locationbias=ipbias';
 const urlList = ['http://localhost:3000', fetchOne];
 
-const corsOptions = {
-	origin: function (origin, callback){
-		if (urlList.indexOf(origin) !== -1){
-			callback(null, true)
-		} else {
-			callback(Error('Not allowed by CORS'))
-		}
-	}
-};
 
-// app.use(cors(corsOptions));
-app.use(cors({
-	corsOptions,
-	optionsSuccessStatus: 200,
-	credentials: true
-}));
+
+// const backEndUrl = 'http://localhost:3000';
+
+const corsOptions = {
+  origin: process.env.BACK_END_URL, // when you deploy your react app, this is where you put the address,
+  credentials: true, // allowing cookies to be sent with requests from the client (session cookie),
+  optionsSuccessStatus: 200 // some legacy browsers IE11 choke on a 204, and options requests
+}
+app.use(cors(corsOptions));
+
+
+
+
+// const corsOptions = {
+// 	origin: function (origin, callback){
+// 		if (urlList.indexOf(origin) !== -1){
+// 			callback(null, true)
+// 		} else {
+// 			callback(Error('Not allowed by CORS'))
+// 		}
+// 	}
+// };
+
+// app.use(cors({
+// 	corsOptions,
+// 	optionsSuccessStatus: 200,
+// 	credentials: true
+// }));
 
 
 // app.use(cors({
@@ -64,12 +78,6 @@ app.use(cors({
 // 	optionsSuccessStatus: 200,
 // 	credentials: true
 // }));
-
-
-
-
-
-
 
 const restaurantController = require('./controllers/restaurantController.js');
 const authController = require('./controllers/authController.js');

@@ -50,7 +50,7 @@ router.get('/:place_id', async (req, res, next) => {
 		console.log('HITTING restaurants GET /:place_ID ROUTE')
 		console.log('this is req.body: ', req.body)
 		console.log('==============================')
-		const response = await fetch('https://maps.googleapis.com/maps/api/place/details/json?placeid=' + req.params.place_id + '&fields=name,formatted_address,url&key=' + process.env.API_KEY)
+		const response = await fetch('https://maps.googleapis.com/maps/api/place/details/json?placeid=' + req.params.place_id + '&fields=name,formatted_address,url&key=' + apiKey);
 		console.log('===========THIS IS RESPONSE++++++++++++')
 		console.log(response);
 		console.log('===========THIS IS RESPONSE++++++++++++')
