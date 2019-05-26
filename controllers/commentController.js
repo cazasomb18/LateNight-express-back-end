@@ -29,11 +29,12 @@ router.get('/restaurants/:place_id', async (req, res, next) => {
 		console.log(foundRestaurant);
 
 		if (foundRestaurant){
-			// const foundComments = await Comment.find(req.params.id);
-			const foundComments = await Comment.findById(req.params.id);
+
+			console.log('THESE ARE THE FOUND COMMENTS');
+			const foundComments = await Comment.find({place_id: req.params.id});
 
 			console.log("================");
-			console.log(/*foundComments, */" <====== comments found on " + req.params.place_id + " GET restaurants/:place_id route");
+			console.log(foundComments, " <====== comments found on " + req.params.place_id + " GET restaurants/:place_id route");
 			console.log("================");
 			await res.json({
 				status: 200,
@@ -75,8 +76,9 @@ router.put('/restaurants/:place_id/edit/:comment_id', async (req, res, next) => 
 		console.log(foundRestaurant);
 
 		console.log('THESE ARE THE FOUND COMMENTS');
-		// const foundComment = await Comment.find({place_id: req.params.id});
-		console.log(foundRestaurant.comments);
+		const foundComment = await Comment.find({place_id: req.params.id});
+		console.log(foundComment);
+		// console.log(foundRestaurant.comments);
 
 		const updatedComment = await Comment.findByIdAndUpdate(req.params.comment_id, req.body, {new: true});
 
