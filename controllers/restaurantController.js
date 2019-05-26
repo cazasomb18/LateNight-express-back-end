@@ -64,10 +64,6 @@ router.get('/:place_id', async (req, res, next) => {
 });
 //////////////////////END of GET '/:place_id' restaurants show route//////////////////////
 
-//// DO I NEED ANOTHER RESTAURANT POST ROUTE WHICH WILL CREATE THE DB ENTRY?
-
-/// THEN THIS ROUTE BELOW WILL HAVE THE SOLE FUNCTION .POPULATING THE COMMENTS TO RESTAURANT/PLACE_ID?
-
 
 ///PURPOSE OF THIS ROUTE = 1.) create mongoDB entry when route is hit 
 ///						   2.) populate comments on that db entry

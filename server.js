@@ -29,22 +29,28 @@ app.use(bodyParser.urlencoded({extended: false}));
 
 app.use(bodyParser.json());
 
+const fetchOne = 'https://maps.googleapis.com/maps/api/place/findplacefromtext/json?key=' + process.env.API_KEY + '&input=late%20night%20restaurants&inputtype=textquery&locationbias=ipbias';
 
-// const urlList = ['http://localhost:3000', fetchOne];
+
+const urlList = ['http://localhost:3000', fetchOne];
 
 const corsOptions = {
-	origin: 'http://localhost:3000',
+	origin: function (origin, callback){
+		if (urlList.indexOf(origin) !== -1){
+			callback(null, true)
+		} else {
+			callback(Error('Not allowed by CORS'))
+		}
+	}
+};
+
+// app.use(cors(corsOptions));
+app.use(cors({
+	corsOptions,
 	optionsSuccessStatus: 200,
 	credentials: true
-}
+}));
 
-// app.use(cors({
-// 	origin: 'http://localhost:3000',
-// 	optionsSuccessStatus: 200,
-// 	credentials: true
-// }));
-
-app.use(cors(corsOptions));
 
 // app.use(cors({
 // 	origin: function(origin, callback){

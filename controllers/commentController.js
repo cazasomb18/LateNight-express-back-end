@@ -123,12 +123,6 @@ router.delete('/restaurants/:place_id/:comment_id', async (req, res, next) => {
 
 		let index;
 
-		// for (let i = 0; i < foundComments.length; i++){
-		// 	if (foundComments[i] === req.params.comment_id){
-		// 		index = i;
-		// 	}
-		// }
-
 		for (let i = 0; i < foundComments.length; i++){
 			if (foundComments.id[i] === req.params.comment_id){
 				index = i;
