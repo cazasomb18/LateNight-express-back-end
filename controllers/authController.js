@@ -100,7 +100,7 @@ router.post('/register', async (req, res, next) => {
 				status: 200,
 				data: user,
 				success: false
-	///created success variable to try to keep track of user data in React///
+	///created success to try to keep track of user data in React///
 			})
 		}
 	} catch(err) {

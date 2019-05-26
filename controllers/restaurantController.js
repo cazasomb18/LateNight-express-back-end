@@ -19,7 +19,7 @@ const apiKey = process.env.API_KEY;
 
 //// PURPOSE OF THIS ROUTE = FETCH PLACE_ID from all restaurants in area w/ kws: Late + night + restaurants
 
-/// GET '/' restaurants index - returns all restaurants in Chicago ///
+/// GET '/' restaurants GETS all place_ids for restaurants matching query ///
 router.get('/', async (req, res, next) => {
 	try{
 		const response = await fetch('https://maps.googleapis.com/maps/api/place/findplacefromtext/json?key=' + apiKey + '&input=late%20night%20restaurants&inputtype=textquery&locationbias=ipbias');
