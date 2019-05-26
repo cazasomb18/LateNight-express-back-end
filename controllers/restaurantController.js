@@ -78,13 +78,16 @@ router.post('/:place_id/comment', async (req, res, next) => {
 		console.log('HITTING POST ROUTE RESTAURANT/PLACE_ID/COMMENT');
 		console.log('===========================');
 		let theRestaurant;
+		let theComment;
 		const foundRestaurant = await Restaurant.findOne({place_id: req.params.place_id});
 		console.log("Found Restaurant: ", foundRestaurant);
 		///find mongoDB entry after created and populate with/comments
 		const restaurantId = await Restaurant.findOne({place_id: req.params.place_id});
 		///get place_id from mongoDB and store it in restaurantId variable
-		if(!foundRestaurant) {
-			///create mongoDB entry when route is hit
+
+		if (!foundRestaurant) {
+
+			///create mongoDB entry when route is hit if no restaurant found
 			const createdRestaurant = await Restaurant.create({
 
 				name: req.body.name,
@@ -94,7 +97,12 @@ router.post('/:place_id/comment', async (req, res, next) => {
 			})
 			theRestaurant = createdRestaurant;
 			console.log("Created Restaurant: ", createdRestaurant);
-		} else {
+			console.log('======================================================');
+			console.log(`${createdRestaurant} <==== createdRestaurant in GET'/restaurant/:place_id ROUTE`);
+			console.log('======================================================');
+
+		} else if (foundRestaurant) {
+
 			theRestaurant = foundRestaurant;
 			const createdComment = await Comment.create({
 
@@ -102,21 +110,26 @@ router.post('/:place_id/comment', async (req, res, next) => {
 					commentAuthor: req.body.commentAuthor
 
 				})
+			console.log("foundRestaurant updated with new comments");
 			console.log(theRestaurant);
 			theRestaurant.comments.push(createdComment);
 			await theRestaurant.save();
-			} 
-		if (restaurantId === await Restaurant.findOne({place_id: req.params.place_id})){
+			theComment = createdComment;
+			console.log('=========var theRestaurant saved======');
+
+		};
+
+	if (req.params.place_id === theRestaurant.place_id){
 			////// if place_id === mongoDB place_id//////
 			///then log the following to console...///
-			console.log('======================================================');
-			console.log(`${createdRestaurant} <==== createdRestaurant in GET'/restaurant/:place_id ROUTE`);
-			console.log('======================================================');
-			JSON.stringify(createdRestaurant);
+
+			console.log('======HITTING THIS BLOCK?!?!=========');
+			JSON.stringify(theRestaurant);
 			res.status(200).json({
-					restaurant: theRestaurant, newComment: createdComment
+					restaurant: theRestaurant, newComment: theComment
 			})
 				/// and stringify/ send res.json...
+
 		} else {
 			if(!restaurantId){
 				console.log('=======================');

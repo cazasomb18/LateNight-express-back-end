@@ -37,7 +37,7 @@ router.get('/restaurants/:place_id', async (req, res, next) => {
 			// const foundComments = await Comment.find(req.params.id);
 
 			console.log('THESE ARE THE FOUND COMMENTS');
-			const foundComments = await Comment.find({place_id: req.params.id});
+			// const foundComments = await Comment.find({place_id: req.params.id});
 
 			console.log("================");
 			console.log(foundComments, " <====== comments found on " + req.params.place_id + " GET restaurants/:place_id route");
@@ -81,8 +81,8 @@ router.put('/restaurants/:place_id/edit/:comment_id', async (req, res, next) => 
 		console.log('THIS IS THE FOUND RESTAURANT');
 		console.log(foundRestaurant);
 
-		console.log('THESE ARE THE FOUND COMMENTS');
 		const foundComment = await Comment.find({place_id: req.params.id});
+		console.log('THESE ARE THE FOUND COMMENTS');
 		console.log(foundComment);
 		// console.log(foundRestaurant.comments);
 
