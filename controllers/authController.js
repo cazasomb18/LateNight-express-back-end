@@ -16,7 +16,9 @@ router.post('/', async (req, res, next) => {
 	console.log(req.session, ' <======= this is session');
 	try {
 		const user = await User.create(req.body);
-
+///I confused myself here, this should check if the user created at registration 
+///has session, if that session matched req.body.userName, then send res.json///
+/// NOT CREATE A NEW USER//'/'
 		req.session.logged = true;
 		req.session.userName = req.body.userName;
 
@@ -59,7 +61,7 @@ router.post('/login', async (req, res, next) => {
 			})
 		}
 	} else {
-		req.session.message = "There were no users under that name. Please register.",
+		req.session.message = "There were no users under that username. Please register.",
 		res.json({
 			status: 200,
 			data: "There were no users under that username. Please register.",
@@ -68,11 +70,11 @@ router.post('/login', async (req, res, next) => {
 
 	}
 });
-///END of POST auth/login///
+/////////END of POST auth/login///////
 
 
 
-/// POST /auth/register --> sees if user exists and creates new one
+///////// POST /auth/register --> sees if user exists and creates new one//////
 router.post('/register', async (req, res, next) => {
 	try {
 		console.log('hitting POST route auth/register');
@@ -98,6 +100,7 @@ router.post('/register', async (req, res, next) => {
 				status: 200,
 				data: user,
 				success: false
+	///created success variable to try to keep track of user data in React///
 			})
 		}
 	} catch(err) {
