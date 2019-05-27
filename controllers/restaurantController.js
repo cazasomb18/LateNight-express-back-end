@@ -8,6 +8,8 @@ require('es6-promise').polyfill();
 
 const apiKey = process.env.API_KEY;
 
+///https://maps.googleapis.com/maps/api/place/findplacefromtext/json?key=' + apiKey + '&input=late%20night%20restaurants&inputtype=textquery&locationbias=ipbias
+///LATER API QUERY (RETURNS ONLY ONE PLACE ID AT A TIME)
 ///original api query: https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=41.8781,-87.6298&radius=5000&type=restaurant&keyword=open&keyword=late&key=' + apiKey
 
 
@@ -22,14 +24,14 @@ const apiKey = process.env.API_KEY;
 /// GET '/' restaurants GETS all place_ids for restaurants matching query ///
 router.get('/', async (req, res, next) => {
 	try{
-		const response = await fetch('https://maps.googleapis.com/maps/api/place/findplacefromtext/json?key=' + apiKey + '&input=late%20night%20restaurants&inputtype=textquery&locationbias=ipbias');
+		const response = await fetch('https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=41.8781,-87.6298&radius=5000&type=restaurant&keyword=open&keyword=late&key=' + apiKey);
 		console.log('this is req.body: ', req.body);
-		const allPlaceIds = await response.json()
-		const parsedResponse = JSON.stringify(allPlaceIds);
-		JSON.stringify(allPlaceIds)
+		const allRestaurants = await response.json()
+		const parsedResponse = JSON.stringify(allRestaurants);
+		JSON.stringify(allRestaurants)
 		res.json({
 			status: 200,
-			data: 'place_ids have been found for: ', allPlaceIds
+			data: 'restaurants have been found: ', allRestaurants
 		})
 	}catch(err){
 		next(err)

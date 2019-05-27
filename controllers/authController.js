@@ -91,6 +91,7 @@ router.post('/login', async (req, res, next) => {
 ///////// POST /auth/register --> sees if user exists and creates new one//////
 router.post('/register', async (req, res, next) => {
 	try {
+		// const thisUser;
 		console.log('hitting POST route auth/register');
 		const userCheck = await User.findOne({userName: req.body.userName});
 		if(userCheck) {
@@ -113,7 +114,7 @@ router.post('/register', async (req, res, next) => {
 			req.session.userName = req.body.userName;
 			req.session.logged = true;
 			req.session.message = "New user" + req.body.userName + "has been registered registered.";
-			user = JSON.stringify(user);
+			username = JSON.stringify(user);
 			res.json({
 				status: 200,
 				data: user,
@@ -139,6 +140,7 @@ router.get('/logout', (req, res, next) => {
 				status:200,
 				data: 'Logout successful'
 			})
+			console.log("User, " + req.body.userName + " has successfully logged out");
 		}
 	})	
 });
