@@ -11,54 +11,66 @@ const User 				= require('../models/user.js');
 
 
 
-///////registration post route --- creates a new user in DB//////
-router.post('/', async (req, res, next) => {
+///////auth GET route --- checks for user in DB//////
+router.get('/', async (req, res, next) => {
 	console.log(req.session, ' <======= this is session');
 	try {
-		const user = await User.create(req.body);
-///I confused myself here, this should check if the user created at registration 
-///has session, if that session matched req.body.userName, then send res.json///
-/// NOT CREATE A NEW USER//'/'
-		req.session.logged = true;
-		req.session.userName = req.body.userName;
-
-		res.json({
-			status: 200,
-			data: 'register successful'
-		});
+		const user = await User.findOne({userName: req.body.userName})
+///I changed this to a GET ROUTE, and switched the mongoose method ot findOne
+///instead of create, now this route checks to see if req.body matches the dbentry
+///and sends res.json() accordingly.
+		if (user.userName === req.body.userName){
+			res.json({
+				status: 200,
+				data: 'user has been found'
+			});
+			console.log(res.json);
+		} else {
+			req.session.logged === false;
+			res.json({
+				status: 400,
+				data: 'user has not been found'
+			});
+			console.log(res.json);
+		}
 	}catch (err){
 		console.log(err);
+		console.error(err);
 		next(err);
 	}
 });
-///////END OF registration POST route --- creates a new user in DB//////
+///////END OF registration GET route --- checks for user in DB//////
 
 /// POST auth/login --> login user that isn't already logged in///
 router.post('/login', async (req, res, next) => {
 	console.log('hitting POST ROUTE AUTH/LOGIN');
-	//this should be find by id//
 	const foundUser = await User.findOne({userName: req.body.userName});
 	if(foundUser) {
-		if(bcrypt.compareSync(req.body.password, foundUser.password)) {
-			console.log('User has been found: ', foundUser);
+		// if (bcrypt.compareSync(req.body.password, foundUser.password)) {
+		console.log('User has been found: ', foundUser);
+		const passwordMatch = bcrypt.compareSync(req.body.password, foundUser.password)
+		if (passwordMatch){
+				req.session.message = '',
+				req.session.logged = true;
+				req.session.userName = req.body.userName;
+				req.session.message = 'Username and password matches';
+				res.json({
+					status: 200,
+					data: foundUser,
+					success: true
+				})
+				console.log(req.body.userName + " has logged in successfully");
+
 ///YOU WERE CONSIDERING CHANGING ABOVE  ^^^ (req.body.password, foundUser.password)////////
-			req.session.userName = req.body.userName;
-			req.session.logged = true;
-			req.session.message = undefined
-			res.json({
-				status: 200,
-				data: foundUser,
-				success: true
-			})
-			console.log('hitting POST ROUTE AUTH/LOGIN');
-			console.log(res.json);
+			// foundUser = JSON.stringify(foundUser);
 		} else {
-			req.session.message = "Username or password were incorrect"
+			req.session.message = "Username or password were incorrect";
 			res.json({
 				status: 400,
 				data: "Login failed. Username or password were incorrect",
 				success: false
 			})
+			console.log(res.json);
 		}
 	} else {
 		req.session.message = "There were no users under that username. Please register.",
@@ -67,6 +79,8 @@ router.post('/login', async (req, res, next) => {
 			data: "There were no users under that username. Please register.",
 			success: false
 		})
+		console.log(res.json);
+		console.log("There were no users under that username. Please register.");
 
 	}
 });
@@ -80,13 +94,16 @@ router.post('/register', async (req, res, next) => {
 		console.log('hitting POST route auth/register');
 		const userCheck = await User.findOne({userName: req.body.userName});
 		if(userCheck) {
+			req.session.message = '';
 			req.session.message = "This username is already in use.";
 			console.log(req.session.message);
 			console.log("This username is already in use.");
 		} else {
+			req.session.message = '';
 			const password = req.body.password;
-			console.log(password);			
+			console.log(password);
 			const passwordHash = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
+			console.log(passwordHash);
 			const userEntry = {};
 			userEntry.userName = req.body.userName;
 			userEntry.password = passwordHash;
@@ -95,7 +112,8 @@ router.post('/register', async (req, res, next) => {
 			console.log(user);
 			req.session.userName = req.body.userName;
 			req.session.logged = true;
-			req.session.message = undefined;
+			req.session.message = "New user" + req.body.userName + "has been registered registered.";
+			user = JSON.stringify(user);
 			res.json({
 				status: 200,
 				data: user,
@@ -107,7 +125,7 @@ router.post('/register', async (req, res, next) => {
 		next(err)
 	}
 });
-/// END of POST auth/login route///
+/// END of POST auth/register route///
 
 
 
