@@ -29,8 +29,8 @@ router.get('/restaurants/:place_id', async (req, res, next) => {
 		console.log(foundRestaurant);
 
 		if (foundRestaurant){
-			const foundComments = await Comment.findById(req.params.id);
-			// const foundComments = await Comment.findById({_id: req.params.id});
+			const foundComments = await Comment.find({place_id: req.params.place_id});
+			// const foundComments = await Comment.findById({_id: req.params.place_id});
 
 			console.log("================");
 			console.log({foundComments}, " <====== comments found on " + req.params.id + " GET restaurants/:place_id route");
@@ -111,36 +111,23 @@ router.put('/restaurants/:place_id/edit/:comment_id', async (req, res, next) => 
 /////////////// comment DELETE '/:id' ROUTE ///////////////
 router.delete('/restaurants/:place_id/:comment_id', async (req, res, next) => {
 	try{
-		
 		const foundRestaurant = await Restaurant.findOne({place_id: req.params.place_id});
 		const foundComments  = await Comment.find({place_id: req.params.place_id});
-
-		console.log('THIS IS THE FOUND RESTAURANT');
-		console.log(foundRestaurant);
-
-		console.log('THESE ARE THE FOUND COMMENTS');
-		console.log(foundComments);
-
+		console.log('FOUNDRESTAURANT: ', foundRestaurant);
+		console.log('THESE ARE THE FOUND COMMENTS', foundComments);
 		let index;
-
 		for (let i = 0; i < foundComments.length; i++){
 			if (foundComments.id[i] === req.params.comment_id){
 				index = i;
 			}
 		}
-
 		await foundComments.slice(index, 1);
-
 		await foundRestaurant.save();
-
 		const deletedComment = await Comment.findByIdAndRemove(req.params.comment_id);
-
 		console.log("+++++++++++++++++++++++");
 		console.log(`${deletedComment}, <======== will be deleted by the comment DELETE ROUTE`);
 		console.log("+++++++++++++++++++++++");
-
 		res.status(200).json(deletedComment);
-
 	}catch(err){
 		next(err)
 	}

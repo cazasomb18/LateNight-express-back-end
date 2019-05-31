@@ -140,7 +140,7 @@ router.get('/logout', (req, res, next) => {
 				status:200,
 				data: 'Logout successful'
 			})
-			console.log("User, " + req.body.userName + " has successfully logged out");
+			console.log("User has successfully logged out");
 		}
 	})	
 });

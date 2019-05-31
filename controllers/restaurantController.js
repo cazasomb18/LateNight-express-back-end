@@ -98,7 +98,7 @@ router.post('/:place_id/comment', async (req, res, next) => {
 			console.log('======================================================');
 			console.log(`${createdRestaurant} <==== createdRestaurant in GET'/restaurant/:place_id ROUTE`);
 			console.log('======================================================');
-
+/*else*/
 		} else if (foundRestaurant) {
 
 			theRestaurant = foundRestaurant;
@@ -114,8 +114,7 @@ router.post('/:place_id/comment', async (req, res, next) => {
 			await theRestaurant.save();
 			theComment = createdComment;
 			console.log('=========var theRestaurant saved======');
-
-		};
+		}
 
 	if (req.params.place_id === theRestaurant.place_id){
 			////// if place_id === mongoDB place_id//////
@@ -126,6 +125,7 @@ router.post('/:place_id/comment', async (req, res, next) => {
 			res.status(200).json({
 					restaurant: theRestaurant, newComment: theComment
 			})
+			console.log('theRestaurant: ', theRestaurant, 'has been updated with comment: ', theComment);
 				/// and stringify/ send res.json...
 
 		} else {
