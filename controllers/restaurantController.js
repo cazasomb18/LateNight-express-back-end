@@ -17,7 +17,7 @@ const apiKey = process.env.API_KEY;
 ///https://maps.googleapis.com/maps/api/place/findplacefromtext/json?key=apiKey&input=late%20night%20restaurants&inputtype=textquery&locationbias=ipbias///
 
 ///this query returns individual restaurant details w/ fields of: "name" "formatted_address" & "url" (url is a googlemaps link... i think...)
-///https://maps.googleapis.com/maps/api/place/details/json?placeid=ChIJi_wOTFwsDogRc254g-wUOIk&key=AIzaSyCbQ8Y7CHZUWrnEGUCqC8fNR4Kw1dfk5AE&fields=name,formatted_address,url///
+///https://maps.googleapis.com/maps/api/place/details/json?placeid=ChIJi_wOTFwsDogRc254g-wUOIk&key=''&fields=name,formatted_address,url///
 
 //// PURPOSE OF THIS ROUTE = FETCH PLACE_ID from all restaurants in area w/ kws: Late + night + restaurants
 
