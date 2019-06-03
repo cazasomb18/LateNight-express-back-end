@@ -17,8 +17,12 @@ const Restaurant 		= require('../models/restaurant.js');
 
 ///FUNCTION OF THIS ROUTE IS TO GET ALL COMMENTS MADE ON A PARTICULAR RESTAURANT///
 ///start of comment GET '/restaurants/show' ROUTE ///
+
+
+////there is an issue here - this route is returning ALL COMMENTS made.////
 router.get('/restaurants/:place_id', async (req, res, next) => {
 	try {
+		let theRestaurant;
 		console.log('This is req.session', req.session);
 
 		console.log('+++++++++++++++++++++');
@@ -29,9 +33,9 @@ router.get('/restaurants/:place_id', async (req, res, next) => {
 		console.log(foundRestaurant);
 
 		if (foundRestaurant){
-			const foundComments = await Comment.find({place_id: req.params.place_id});
+			const foundComments = await Comment.find({place_id: req.params.comments});
+			// const foundComments = await Comment.find({place_id: req.params.place_id});
 			// const foundComments = await Comment.findById({_id: req.params.place_id});
-
 			console.log("================");
 			console.log({foundComments}, " <====== comments found on " + req.params.id + " GET restaurants/:place_id route");
 			// const foundComments = await Comment.find(req.params.id);

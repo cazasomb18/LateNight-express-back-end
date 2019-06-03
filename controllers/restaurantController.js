@@ -5,30 +5,19 @@ const Comment = require('../models/comment')
 require('dotenv').config();
 require('isomorphic-fetch');
 require('es6-promise').polyfill();
-
+const apiUrl = process.env.API_URL;
 const apiKey = process.env.API_KEY;
-
-///https://maps.googleapis.com/maps/api/place/findplacefromtext/json?key=' + apiKey + '&input=late%20night%20restaurants&inputtype=textquery&locationbias=ipbias
-///LATER API QUERY (RETURNS ONLY ONE PLACE ID AT A TIME)
-///original api query: https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=41.8781,-87.6298&radius=5000&type=restaurant&keyword=open&keyword=late&key=' + apiKey
-
-
-///this query returns all restaurnts w/ kws: "restaurants" "open" "late" 
-///https://maps.googleapis.com/maps/api/place/findplacefromtext/json?key=apiKey&input=late%20night%20restaurants&inputtype=textquery&locationbias=ipbias///
-
-///this query returns individual restaurant details w/ fields of: "name" "formatted_address" & "url" (url is a googlemaps link... i think...)
-///https://maps.googleapis.com/maps/api/place/details/json?placeid=ChIJi_wOTFwsDogRc254g-wUOIk&key=''&fields=name,formatted_address,url///
 
 //// PURPOSE OF THIS ROUTE = FETCH PLACE_ID from all restaurants in area w/ kws: Late + night + restaurants
 
 /// GET '/' restaurants GETS all place_ids for restaurants matching query ///
 router.get('/', async (req, res, next) => {
 	try{
-		const response = await fetch('https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=41.8781,-87.6298&radius=5000&type=restaurant&keyword=open&keyword=late&key=' + apiKey);
-		console.log('this is req.body: ', req.body);
+		const response = await fetch(apiUrl + apiKey);
 		const allRestaurants = await response.json()
 		const parsedResponse = JSON.stringify(allRestaurants);
 		JSON.stringify(allRestaurants)
+		console.log('this is req.body: ', allRestaurants);
 		res.json({
 			status: 200,
 			data: 'restaurants have been found: ', allRestaurants
@@ -52,13 +41,13 @@ router.get('/:place_id', async (req, res, next) => {
 		console.log('HITTING restaurants GET /:place_ID ROUTE')
 		console.log('this is req.body: ', req.body)
 		console.log('==============================')
-		const response = await fetch('https://maps.googleapis.com/maps/api/place/details/json?placeid=' + req.params.place_id + '&fields=name,formatted_address,url&key=' + apiKey);
-		console.log('===========THIS IS RESPONSE++++++++++++')
-		console.log(response);
-		console.log('===========THIS IS RESPONSE++++++++++++')
+		const response = await fetch('https://maps.googleapis.com/maps/api/place/details/json?placeid=' + req.params.place_id + '&fields=name,formatted_address,place_id&key=' + apiKey);
 		const parsedRestDeetResponse = await response.json();
 		JSON.stringify(parsedRestDeetResponse);
 		res.json(parsedRestDeetResponse);
+		console.log('===========THIS IS RESPONSE++++++++++++')
+		console.log(parsedRestDeetResponse);
+		console.log('===========THIS IS RESPONSE++++++++++++')
 	}catch(err){
 		console.log(err);
 		console.error(err);
@@ -89,7 +78,7 @@ router.post('/:place_id/comment', async (req, res, next) => {
 			const createdRestaurant = await Restaurant.create({
 
 				name: req.body.name,
-				address: req.body.address,
+				address: req.body.formatted_address,
 				place_id: req.params.place_id
 
 			})
@@ -98,34 +87,35 @@ router.post('/:place_id/comment', async (req, res, next) => {
 			console.log('======================================================');
 			console.log(`${createdRestaurant} <==== createdRestaurant in GET'/restaurant/:place_id ROUTE`);
 			console.log('======================================================');
-/*else*/
-		} else if (foundRestaurant) {
+			//// OR... do I need to create a populate instance on the comment controller which automatically
+			//// takes the _id for each restaurant and saves it in a field????
+		} if (foundRestaurant) {
 
-			theRestaurant = foundRestaurant;
 			const createdComment = await Comment.create({
 
+					restaurant_id: foundRestaurant,
 					commentBody: req.body.commentBody,
 					commentAuthor: req.body.commentAuthor
 
 				})
 			console.log("foundRestaurant updated with new comments");
-			console.log(theRestaurant);
-			theRestaurant.comments.push(createdComment);
-			await theRestaurant.save();
+			console.log(foundRestaurant);
+			foundRestaurant.comments.push(createdComment);
+			await foundRestaurant.save();
 			theComment = createdComment;
 			console.log('=========var theRestaurant saved======');
-		}
+		};
 
-	if (req.params.place_id === theRestaurant.place_id){
+	if (req.params.place_id === foundRestaurant.place_id){
 			////// if place_id === mongoDB place_id//////
 			///then log the following to console...///
 
 			console.log('======HITTING THIS BLOCK?!?!=========');
-			JSON.stringify(theRestaurant);
+			JSON.stringify(foundRestaurant);
 			res.status(200).json({
-					restaurant: theRestaurant, newComment: theComment
+					restaurant: foundRestaurant, newComment: theComment
 			})
-			console.log('theRestaurant: ', theRestaurant, 'has been updated with comment: ', theComment);
+			console.log('foundRestaurant: ', foundRestaurant, 'has been updated with comment: ', theComment);
 				/// and stringify/ send res.json...
 
 		} else {
