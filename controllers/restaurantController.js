@@ -61,6 +61,7 @@ router.get('/:place_id', async (req, res, next) => {
 /////////////////////start of POST '/:place_id/comment' restaurants route///////////////
 router.post('/:place_id/comment', async (req, res, next) => {
 	try{
+		///make sure that the fetch is set up to grab from the correct place in state///
 		console.log('===========================');
 		console.log('HITTING POST ROUTE RESTAURANT/PLACE_ID/COMMENT');
 		console.log('===========================');
@@ -78,7 +79,7 @@ router.post('/:place_id/comment', async (req, res, next) => {
 			const createdRestaurant = await Restaurant.create({
 
 				name: req.body.name,
-				address: req.body.formatted_address,
+				address: req.body.vicinity,
 				place_id: req.params.place_id
 
 			})
@@ -87,15 +88,28 @@ router.post('/:place_id/comment', async (req, res, next) => {
 			console.log('======================================================');
 			console.log(`${createdRestaurant} <==== createdRestaurant in GET'/restaurant/:place_id ROUTE`);
 			console.log('======================================================');
+			const createdComment = await Comment.create({
+
+				restaurant_id: foundRestaurant.id,
+				commentBody: req.body.commentBody,
+				commentAuthor: req.session.userName
+
+			})
+			console.log("foundRestaurant updated with new comments");
+			console.log(foundRestaurant);
+			foundRestaurant.comments.push(createdComment);
+			await foundRestaurant.save();
+			theComment = createdComment;
+			console.log('=========var theRestaurant saved======');
 			//// OR... do I need to create a populate instance on the comment controller which automatically
-			//// takes the _id for each restaurant and saves it in a field????
+//else		//// takes the _id for each restaurant and saves it in a field????
 		} if (foundRestaurant) {
 
 			const createdComment = await Comment.create({
 
-					restaurant_id: foundRestaurant,
+					restaurant_id: foundRestaurant.id,
 					commentBody: req.body.commentBody,
-					commentAuthor: req.body.commentAuthor
+					commentAuthor: req.session.userName
 
 				})
 			console.log("foundRestaurant updated with new comments");

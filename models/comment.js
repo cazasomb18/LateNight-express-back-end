@@ -11,6 +11,7 @@ const commentSchema = new mongoose.Schema({
 	}]
 });
 
+
 ///according to this I will have to populate restaurant_id within POST restaurants/:place_id/comment route... ???
 
 // console.log("This is the comment Schema: ", commentSchema);
