@@ -7,13 +7,15 @@ const bodyParser 		= require('body-parser');
 const bcrypt 			= require('bcrypt');
 const session 			= require('express-session');
 const User 				= require('../models/user.js');
-
+const Comment = require('../models/comment.js')
 
 
 
 ///////auth GET route --- checks for user in DB//////
 router.get('/', async (req, res, next) => {
 	console.log(req.session, ' <======= this is session');
+	console.log(req.session.userName);
+	console.log('^--- This is the req.session.username');
 	try {
 		const user = await User.findOne({userName: req.body.userName})
 ///I changed this to a GET ROUTE, and switched the mongoose method ot findOne
@@ -40,6 +42,40 @@ router.get('/', async (req, res, next) => {
 	}
 });
 ///////END OF registration GET route --- checks for user in DB//////
+
+
+///this route returns all comments made by a user's session
+router.get('/usercomments', async (req, res, next) => {
+	try{
+		console.log(req.session);
+		if (req.session){
+			console.log(req.session);
+			const foundUser = await User.findOne({userName: req.session.userName})
+			console.log(foundUser);
+			if (foundUser){
+				console.log('foundUser?');
+				const foundComments = await Comment.find({commentAuthor: req.session.userName});
+				res.json({
+					status: 200,
+					data: foundComments
+				});
+			} else {
+				res.json({
+					status: 400,
+					data: 'no comments found'
+				});
+			}
+		} else {
+			res.json({
+				status: 400,
+				data: 'no user session found'
+			})
+		}
+	}catch(err){
+		console.error(err);
+		next(err);
+	}
+});
 
 /// POST auth/login --> login user that isn't already logged in///
 router.post('/login', async (req, res, next) => {

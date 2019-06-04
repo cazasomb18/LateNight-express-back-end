@@ -101,10 +101,7 @@ router.post('/:place_id/comment', async (req, res, next) => {
 			await foundRestaurant.save();
 			theComment = createdComment;
 			console.log('=========var theRestaurant saved======');
-			//// OR... do I need to create a populate instance on the comment controller which automatically
-//else		//// takes the _id for each restaurant and saves it in a field????
-		} if (foundRestaurant) {
-
+		} else if (foundRestaurant) {
 			const createdComment = await Comment.create({
 
 					restaurant_id: foundRestaurant.id,
