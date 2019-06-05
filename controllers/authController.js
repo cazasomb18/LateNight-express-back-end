@@ -53,7 +53,6 @@ router.get('/usercomments', async (req, res, next) => {
 			const foundUser = await User.findOne({userName: req.session.userName})
 			console.log(foundUser);
 			if (foundUser){
-				console.log('foundUser?');
 				const foundComments = await Comment.find({commentAuthor: req.session.userName});
 				res.json({
 					status: 200,
@@ -154,7 +153,7 @@ router.post('/register', async (req, res, next) => {
 			res.json({
 				status: 200,
 				data: user,
-				success: false
+				registered: true
 	///created success to try to keep track of user data in React///
 			})
 		}
@@ -174,7 +173,8 @@ router.get('/logout', (req, res, next) => {
 		} else {
 			res.json({
 				status:200,
-				data: 'Logout successful'
+				data: 'Logout successful',
+				loggedout: true
 			})
 			console.log("User has successfully logged out");
 		}
