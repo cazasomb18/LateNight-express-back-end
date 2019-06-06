@@ -10,7 +10,7 @@ const apiKey = process.env.API_KEY;
 
 //// PURPOSE OF THIS ROUTE = FETCH PLACE_ID from all restaurants in area w/ kws: Late + night + restaurants
 
-/// GET '/' restaurants GETS all place_ids for restaurants matching query ///
+/// GET '/' restaurants GETS all DATA for ALL restaurants matching query ///
 router.get('/', async (req, res, next) => {
 	try{
 		const response = await fetch(apiUrl + apiKey);
@@ -29,6 +29,28 @@ router.get('/', async (req, res, next) => {
 	}
 });
 /////////////// END of GET '/' restaurants show route//////////////
+
+router.get('/nearby', async (req, res, next) => {
+	try{
+		let lat = req.query.searchTerm
+		console.log(lat);
+		console.log('^-- Query');
+		// let lat = req.query.lat
+		// let lng = req.query
+		const nearbySearchResponse = await fetch(process.env.GEO_LOC_API_URL + req.query.searchTerm + process.env.GEO_LOC_API_FIELDS + process.env.API_KEY);
+		parsedNearbyResponse = await nearbySearchResponse.json();
+		JSON.stringify(parsedNearbyResponse);
+		res.json({
+			status: 200,
+			data: parsedNearbyResponse
+		})
+		console.log(parsedNearbyResponse)
+	}catch{
+		console.error(err)
+
+	}
+	
+})
 
 
 ///////////////GET '/:id' restaurants show route -- returns details about restaurants

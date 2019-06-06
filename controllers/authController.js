@@ -10,13 +10,8 @@ const User 				= require('../models/user.js');
 const Comment = require('../models/comment.js')
 const Restaurant = require('../models/restaurant.js')
 
-
-
 /////auth GET route --- checks for user in DB//////
 router.get('/', async (req, res, next) => {
-	// console.log(req.session, ' <======= this is session');
-	// console.log(req.session.userName);
-	// console.log('^--- This is the req.session.username');
 	try {
 		const user = await User.findOne({userName: req.body.userName})
 ///I changed this to a GET ROUTE, and switched the mongoose method ot findOne
@@ -48,7 +43,7 @@ router.get('/', async (req, res, next) => {
 ///this route returns all comments made by a user's session... except there is no session... why?!////
 router.get('/usercomments', async (req, res, next) => {
 	try{
-		if (req.session.userName){
+		if (req.session.logged === true){
 			console.log('==================');
 			console.log(req.session);
 			console.log('This is req.session');
