@@ -80,7 +80,8 @@ router.post('/:place_id/comment', async (req, res, next) => {
 
 				name: req.body.name,
 				address: req.body.vicinity,
-				place_id: req.params.place_id
+				place_id: req.params.place_id,
+				userName: req.session.userName
 
 			})
 			theRestaurant = createdRestaurant;
@@ -90,9 +91,10 @@ router.post('/:place_id/comment', async (req, res, next) => {
 			console.log('======================================================');
 			const createdComment = await Comment.create({
 
-				restaurant_id: foundRestaurant.id,
 				commentBody: req.body.commentBody,
-				commentAuthor: req.session.userName
+				commentAuthor: req.session.userName,
+				restaurant_name: theRestaurant.name,
+				restaurant_id: theRestaurant.id
 
 			})
 			console.log("foundRestaurant updated with new comments");
@@ -100,11 +102,16 @@ router.post('/:place_id/comment', async (req, res, next) => {
 			foundRestaurant.comments.push(createdComment);
 			await foundRestaurant.save();
 			theComment = createdComment;
+			const foundUser = await User.find({userName: req.session.userName})
+			foundUser.comments.push(foundRestaurant)
+			await foundUser.save()
 			console.log('=========var theRestaurant saved======');
 		} else if (foundRestaurant) {
 			const createdComment = await Comment.create({
 
 					restaurant_id: foundRestaurant.id,
+					// restaurant_place_id: foundRestaurant.place_id,
+					restaurant_name: foundRestaurant.name,
 					commentBody: req.body.commentBody,
 					commentAuthor: req.session.userName
 

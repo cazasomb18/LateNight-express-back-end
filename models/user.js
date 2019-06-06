@@ -6,21 +6,12 @@ const UserSchema = new mongoose.Schema({
 	email: String,
 	comments: [{type: mongoose.Schema.Types.ObjectId, 
 		ref: 'Comment'
+	}],
+	restaurants: [{type: mongoose.Schema.Types.ObjectId, 
+		ref: 'Restaurant'
 	}]
 });
 
-
-
-// console.log("");
-// console.log("");
-// console.log("");
-// console.log("THIS IS THE USER SCHEMA: ", UserSchema);
-
 const User = mongoose.model('User', UserSchema);
-
-// console.log("");
-// console.log("");
-// console.log("");
-// console.log("USER MODEL: ", User);
 
 module.exports = User;

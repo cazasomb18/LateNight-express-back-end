@@ -8,14 +8,15 @@ const bcrypt 			= require('bcrypt');
 const session 			= require('express-session');
 const User 				= require('../models/user.js');
 const Comment = require('../models/comment.js')
+const Restaurant = require('../models/restaurant.js')
 
 
 
-///////auth GET route --- checks for user in DB//////
+/////auth GET route --- checks for user in DB//////
 router.get('/', async (req, res, next) => {
-	console.log(req.session, ' <======= this is session');
-	console.log(req.session.userName);
-	console.log('^--- This is the req.session.username');
+	// console.log(req.session, ' <======= this is session');
+	// console.log(req.session.userName);
+	// console.log('^--- This is the req.session.username');
 	try {
 		const user = await User.findOne({userName: req.body.userName})
 ///I changed this to a GET ROUTE, and switched the mongoose method ot findOne
@@ -31,37 +32,45 @@ router.get('/', async (req, res, next) => {
 			req.session.logged === false;
 			res.json({
 				status: 400,
-				data: 'user has not been found'
+				data: 'no user has been found'
 			});
 			console.log(res.json);
 		}
 	}catch (err){
-		console.log(err);
 		console.error(err);
 		next(err);
 	}
 });
-///////END OF registration GET route --- checks for user in DB//////
+/////END OF auth/ GET route --- checks for user in DB//////
+///could i maybe use this route to validate the current user and THEN hit the below endpoint???///
 
 
-///this route returns all comments made by a user's session
+///this route returns all comments made by a user's session... except there is no session... why?!////
 router.get('/usercomments', async (req, res, next) => {
 	try{
-		console.log(req.session);
-		if (req.session){
+		if (req.session.userName){
+			console.log('==================');
 			console.log(req.session);
+			console.log('This is req.session');
+			console.log('==================');
 			const foundUser = await User.findOne({userName: req.session.userName})
+			console.log('==================');
 			console.log(foundUser);
+			console.log('This is found User');
+			console.log('==================');
 			if (foundUser){
-				const foundComments = await Comment.find({commentAuthor: req.session.userName});
+				const foundRestaurants = await Restaurant.find({userName: req.session.userName});
+				const foundComments = await Comment.find({commentAuthor: req.session.userName})
+				console.log(foundRestaurants);
+				console.log(foundComments);
 				res.json({
 					status: 200,
-					data: foundComments
+					data: foundRestaurants, foundComments
 				});
 			} else {
 				res.json({
 					status: 400,
-					data: 'no comments found'
+					data: 'no data found'
 				});
 			}
 		} else {
@@ -75,14 +84,16 @@ router.get('/usercomments', async (req, res, next) => {
 		next(err);
 	}
 });
+///end of auth/get/usercomments GET route - WHY ISN'T THIS WORKING???
+
 
 /// POST auth/login --> login user that isn't already logged in///
 router.post('/login', async (req, res, next) => {
 	console.log('hitting POST ROUTE AUTH/LOGIN');
 	const foundUser = await User.findOne({userName: req.body.userName});
 	if(foundUser) {
-		// if (bcrypt.compareSync(req.body.password, foundUser.password)) {
 		console.log('User has been found: ', foundUser);
+		console.log(req.session);
 		const passwordMatch = bcrypt.compareSync(req.body.password, foundUser.password)
 		if (passwordMatch){
 				req.session.message = '',
@@ -95,9 +106,7 @@ router.post('/login', async (req, res, next) => {
 					success: true
 				})
 				console.log(req.body.userName + " has logged in successfully");
-
-///YOU WERE CONSIDERING CHANGING ABOVE  ^^^ (req.body.password, foundUser.password)////////
-			// foundUser = JSON.stringify(foundUser);
+				console.log(req.session.message);
 		} else {
 			req.session.message = "Username or password were incorrect";
 			res.json({
@@ -115,8 +124,7 @@ router.post('/login', async (req, res, next) => {
 			success: false
 		})
 		console.log(res.json);
-		console.log("There were no users under that username. Please register.");
-
+		console.log(req.session.message);
 	}
 });
 /////////END of POST auth/login///////
@@ -126,7 +134,6 @@ router.post('/login', async (req, res, next) => {
 ///////// POST /auth/register --> sees if user exists and creates new one//////
 router.post('/register', async (req, res, next) => {
 	try {
-		// const thisUser;
 		console.log('hitting POST route auth/register');
 		const userCheck = await User.findOne({userName: req.body.userName});
 		if(userCheck) {
@@ -154,7 +161,6 @@ router.post('/register', async (req, res, next) => {
 				status: 200,
 				data: user,
 				registered: true
-	///created success to try to keep track of user data in React///
 			})
 		}
 	} catch(err) {
