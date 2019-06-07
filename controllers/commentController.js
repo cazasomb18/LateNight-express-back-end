@@ -82,8 +82,8 @@ router.put('/restaurants/:place_id/edit/:comment_id', async (req, res, next) => 
 
 		const foundRestaurant = await Restaurant.findOne({place_id: req.params.place_id}).populate('comments');
 
-		console.log('THIS IS THE FOUND RESTAURANT');
 		console.log(foundRestaurant);
+		console.log('THIS IS THE FOUND RESTAURANT');
 
 		const foundComment = await Comment.find({place_id: req.params.id});
 		console.log('THESE ARE THE FOUND COMMENTS');
@@ -117,7 +117,7 @@ router.delete('/restaurants/:place_id/:comment_id', async (req, res, next) => {
 	try{
 		const foundRestaurant = await Restaurant.findOne({place_id: req.params.place_id});
 		const foundComments  = await Comment.find({place_id: req.params.place_id});
-		console.log('FOUNDRESTAURANT: ', foundRestaurant);
+		console.log('FOUND RESTAURANT: ', foundRestaurant);
 		console.log('THESE ARE THE FOUND COMMENTS', foundComments);
 		let index;
 		for (let i = 0; i < foundComments.length; i++){

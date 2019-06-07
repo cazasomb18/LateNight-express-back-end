@@ -40,7 +40,7 @@ router.get('/', async (req, res, next) => {
 ///could i maybe use this route to validate the current user and THEN hit the below endpoint???///
 
 
-///this route returns all comments made by a user's session... except there is no session... why?!////
+///this route returns all comments made by a user's session///
 router.get('/usercomments', async (req, res, next) => {
 	try{
 		if (req.session.logged === true){
@@ -109,7 +109,6 @@ router.post('/login', async (req, res, next) => {
 				data: "Login failed. Username or password were incorrect",
 				success: false
 			})
-			console.log(res.json);
 		}
 	} else {
 		req.session.message = "There were no users under that username. Please register.",
@@ -118,8 +117,8 @@ router.post('/login', async (req, res, next) => {
 			data: "There were no users under that username. Please register.",
 			success: false
 		})
-		console.log(res.json);
-		console.log(req.session.message);
+		console.log(res.json.data);
+		console.log(res.session.message);
 	}
 });
 /////////END of POST auth/login///////

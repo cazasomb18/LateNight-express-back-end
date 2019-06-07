@@ -30,13 +30,13 @@ router.get('/', async (req, res, next) => {
 });
 /////////////// END of GET '/' restaurants show route//////////////
 
+
+///// restaurants/nearby GET route '/' this is the geolocation backend api call /////
 router.get('/nearby', async (req, res, next) => {
 	try{
 		let lat = req.query.searchTerm
 		console.log(lat);
 		console.log('^-- Query');
-		// let lat = req.query.lat
-		// let lng = req.query
 		const nearbySearchResponse = await fetch(process.env.GEO_LOC_API_URL + req.query.searchTerm + process.env.GEO_LOC_API_FIELDS + process.env.API_KEY);
 		parsedNearbyResponse = await nearbySearchResponse.json();
 		JSON.stringify(parsedNearbyResponse);
@@ -56,25 +56,25 @@ router.get('/nearby', async (req, res, next) => {
 ///////////////GET '/:id' restaurants show route -- returns details about restaurants
 	///PURPOSE OF THIS ROUTE = GATHER PLACE_ID IN ORDER TO FETCH 2ND API CALL WHICH WILL RETURN
 	///DETAILED INFORMATION ABOUT THAT PARTICULAR RESTAURANT THE USER SELECTED/////////
-router.get('/:place_id', async (req, res, next) => {
-	try {
-		console.log(req.session, "this is req.session")
-		console.log('+++++++++++++++++++++++++++++')
-		console.log('HITTING restaurants GET /:place_ID ROUTE')
-		console.log('this is req.body: ', req.body)
-		console.log('==============================')
-		const response = await fetch('https://maps.googleapis.com/maps/api/place/details/json?placeid=' + req.params.place_id + '&fields=name,formatted_address,place_id&key=' + apiKey);
-		const parsedRestDeetResponse = await response.json();
-		JSON.stringify(parsedRestDeetResponse);
-		res.json(parsedRestDeetResponse);
-		console.log('===========THIS IS RESPONSE++++++++++++')
-		console.log(parsedRestDeetResponse);
-		console.log('===========THIS IS RESPONSE++++++++++++')
-	}catch(err){
-		console.log(err);
-		console.error(err);
-	}
-});
+// router.get('/:place_id', async (req, res, next) => {
+// 	try {
+// 		console.log(req.session, "this is req.session")
+// 		console.log('+++++++++++++++++++++++++++++')
+// 		console.log('HITTING restaurants GET /:place_ID ROUTE')
+// 		console.log('this is req.body: ', req.body)
+// 		console.log('==============================')
+// 		const response = await fetch('https://maps.googleapis.com/maps/api/place/details/json?placeid=' + req.params.place_id + '&fields=name,formatted_address,place_id&key=' + apiKey);
+// 		const parsedRestDeetResponse = await response.json();
+// 		JSON.stringify(parsedRestDeetResponse);
+// 		res.json(parsedRestDeetResponse);
+// 		console.log('===========THIS IS RESPONSE++++++++++++')
+// 		console.log(parsedRestDeetResponse);
+// 		console.log('===========THIS IS RESPONSE++++++++++++')
+// 	}catch(err){
+// 		console.log(err);
+// 		console.error(err);
+// 	}
+// });
 //////////////////////END of GET '/:place_id' restaurants show route//////////////////////
 
 
@@ -119,13 +119,13 @@ router.post('/:place_id/comment', async (req, res, next) => {
 				restaurant_id: theRestaurant.id
 
 			})
-			console.log("foundRestaurant updated with new comments");
-			console.log(foundRestaurant);
-			foundRestaurant.comments.push(createdComment);
+			console.log("this restaurant didn't exist, we just created it");
+			console.log(createdRestaurant);
+			createdRestaurant.comments.push(createdComment);
 			await foundRestaurant.save();
 			theComment = createdComment;
 			const foundUser = await User.find({userName: req.session.userName})
-			foundUser.comments.push(foundRestaurant)
+			foundUser.comments.push(createdRestaurant)
 			await foundUser.save()
 			console.log('=========var theRestaurant saved======');
 		} else if (foundRestaurant) {
@@ -145,19 +145,13 @@ router.post('/:place_id/comment', async (req, res, next) => {
 			theComment = createdComment;
 			console.log('=========var theRestaurant saved======');
 		};
-
 	if (req.params.place_id === foundRestaurant.place_id){
-			////// if place_id === mongoDB place_id//////
-			///then log the following to console...///
-
 			console.log('======HITTING THIS BLOCK?!?!=========');
 			JSON.stringify(foundRestaurant);
 			res.status(200).json({
 					restaurant: foundRestaurant, newComment: theComment
 			})
 			console.log('foundRestaurant: ', foundRestaurant, 'has been updated with comment: ', theComment);
-				/// and stringify/ send res.json...
-
 		} else {
 			if(!restaurantId){
 				console.log('=======================');
