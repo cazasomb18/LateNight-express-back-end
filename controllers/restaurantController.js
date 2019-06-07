@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Restaurant = require('../models/restaurant');
 const Comment = require('../models/comment')
+const User = require('../models/user')
 require('dotenv').config();
 require('isomorphic-fetch');
 require('es6-promise').polyfill();
@@ -122,9 +123,11 @@ router.post('/:place_id/comment', async (req, res, next) => {
 			console.log("this restaurant didn't exist, we just created it");
 			console.log(createdRestaurant);
 			createdRestaurant.comments.push(createdComment);
-			await foundRestaurant.save();
+			await createdRestaurant.save();
 			theComment = createdComment;
-			const foundUser = await User.find({userName: req.session.userName})
+			const foundUser = await User.findOne({userName: req.session.userName})
+			console.log("\n we just tried to find the user based on session");
+			console.log(foundUser);
 			foundUser.comments.push(createdRestaurant)
 			await foundUser.save()
 			console.log('=========var theRestaurant saved======');
@@ -145,7 +148,7 @@ router.post('/:place_id/comment', async (req, res, next) => {
 			theComment = createdComment;
 			console.log('=========var theRestaurant saved======');
 		};
-	if (req.params.place_id === foundRestaurant.place_id){
+		if (req.params.place_id === foundRestaurant.place_id){
 			console.log('======HITTING THIS BLOCK?!?!=========');
 			JSON.stringify(foundRestaurant);
 			res.status(200).json({
