@@ -126,11 +126,23 @@ router.delete('/restaurants/:place_id/:comment_id', async (req, res, next) => {
 			}
 		}
 		await foundComments.slice(index, 1);
-		await foundRestaurant.save();
 		const deletedComment = await Comment.findByIdAndRemove(req.params.comment_id);
 		console.log("+++++++++++++++++++++++");
 		console.log(`${deletedComment}, <======== will be deleted by the comment DELETE ROUTE`);
 		console.log("+++++++++++++++++++++++");
+		console.log("\nhere's the restaurant after delete")
+		console.log(foundRestaurant);
+
+		// find ref to comment (deletedComment._id)
+		// remove that comment(ref) from foundRestaurant's comments array
+		// find index of element in foundRestaurant's comments array with id = deletedComment._id
+		// splice it out
+
+		// after you splice it out, if the array has 0 length, delete the restaurant
+		// await Restaurant.findByIdAndRemove(....)
+
+		await foundRestaurant.save();
+
 		res.status(200).json(deletedComment);
 	}catch(err){
 		next(err)

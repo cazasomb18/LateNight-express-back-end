@@ -52,7 +52,7 @@ router.get('/nearby', async (req, res, next) => {
 	}
 	
 })
-
+///// END OF restaurants/nearby GET route '/ /////
 
 ///////////////GET '/:id' restaurants show route -- returns details about restaurants
 	///PURPOSE OF THIS ROUTE = GATHER PLACE_ID IN ORDER TO FETCH 2ND API CALL WHICH WILL RETURN
@@ -84,7 +84,6 @@ router.get('/nearby', async (req, res, next) => {
 /////////////////////start of POST '/:place_id/comment' restaurants route///////////////
 router.post('/:place_id/comment', async (req, res, next) => {
 	try{
-		///make sure that the fetch is set up to grab from the correct place in state///
 		console.log('===========================');
 		console.log('HITTING POST ROUTE RESTAURANT/PLACE_ID/COMMENT');
 		console.log('===========================');
@@ -92,13 +91,10 @@ router.post('/:place_id/comment', async (req, res, next) => {
 		let theComment;
 		const foundRestaurant = await Restaurant.findOne({place_id: req.params.place_id});
 		console.log("Found Restaurant: ", foundRestaurant);
-		///find mongoDB entry after created and populate with/comments
 		const restaurantId = await Restaurant.findOne({place_id: req.params.place_id});
-		///get place_id from mongoDB and store it in restaurantId variable
 
 		if (!foundRestaurant) {
 
-			///create mongoDB entry when route is hit if no restaurant found
 			const createdRestaurant = await Restaurant.create({
 
 				name: req.body.name,
@@ -128,14 +124,19 @@ router.post('/:place_id/comment', async (req, res, next) => {
 			const foundUser = await User.findOne({userName: req.session.userName})
 			console.log("\n we just tried to find the user based on session");
 			console.log(foundUser);
-			foundUser.comments.push(createdRestaurant)
+			foundUser.comments.push(createdComment)
 			await foundUser.save()
 			console.log('=========var theRestaurant saved======');
+
+			JSON.stringify(createdRestaurant);
+			res.status(200).json({
+				restaurant: createdRestaurant, newComment: theComment
+			})
+
 		} else if (foundRestaurant) {
 			const createdComment = await Comment.create({
 
 					restaurant_id: foundRestaurant.id,
-					// restaurant_place_id: foundRestaurant.place_id,
 					restaurant_name: foundRestaurant.name,
 					commentBody: req.body.commentBody,
 					commentAuthor: req.session.userName
@@ -147,14 +148,12 @@ router.post('/:place_id/comment', async (req, res, next) => {
 			await foundRestaurant.save();
 			theComment = createdComment;
 			console.log('=========var theRestaurant saved======');
-		};
-		if (req.params.place_id === foundRestaurant.place_id){
-			console.log('======HITTING THIS BLOCK?!?!=========');
 			JSON.stringify(foundRestaurant);
 			res.status(200).json({
-					restaurant: foundRestaurant, newComment: theComment
+					restaurant: foundRestaurant, 
+					newComment: theComment,
+					ok: true
 			})
-			console.log('foundRestaurant: ', foundRestaurant, 'has been updated with comment: ', theComment);
 		} else {
 			if(!restaurantId){
 				console.log('=======================');
@@ -168,6 +167,7 @@ router.post('/:place_id/comment', async (req, res, next) => {
 		console.log(err);
 	}
 });
+		// if (req.params.place_id === foundRestaurant.place_id){
 /////////////////////END of POST '/:place_id/comment' restaurants route///////////////
 
 
