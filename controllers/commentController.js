@@ -152,19 +152,6 @@ router.delete('/restaurants/:place_id/:comment_id', async (req, res, next) => {
 		console.log("\nhere's the restaurant after delete")
 		console.log(foundRestaurant);
 
-		// const id = deletedComment._id;
-		// // find ref to comment (deletedComment._id)
-		// const refToComment = await Comment.findOne(id);
-		// // find index of element in foundRestaurant's comments array with id = deletedComment._id
-		// // splice it out
-		// await foundRestaurant.comments.splice(refToComment, 1);
-		// // remove that comment(ref) from foundRestaurant's comments array
-		// if (foundRestaurant.comments.length === 0){
-		// 	await Restaurant.findByIdAndRemove({id: req.params.place_id})
-		// }
-		// after you splice it out, if the array has 0 length, delete the restaurant
-		// await Restaurant.findByIdAndRemove(....)
-
 		await foundRestaurant.save();
 		
 		console.log("here is restaurant WITHOUT the ref to the comment that was deleted")
