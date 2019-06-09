@@ -9,8 +9,6 @@ require('es6-promise').polyfill();
 const apiUrl = process.env.API_URL;
 const apiKey = process.env.API_KEY;
 
-//// PURPOSE OF THIS ROUTE = FETCH PLACE_ID from all restaurants in area w/ kws: Late + night + restaurants
-
 /// GET '/' restaurants GETS all DATA for ALL restaurants matching query ///
 router.get('/', async (req, res, next) => {
 	try{
@@ -167,7 +165,6 @@ router.post('/:place_id/comment', async (req, res, next) => {
 		console.log(err);
 	}
 });
-		// if (req.params.place_id === foundRestaurant.place_id){
 /////////////////////END of POST '/:place_id/comment' restaurants route///////////////
 
 

@@ -40,7 +40,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 
 app.use(bodyParser.json());
 
-// const fetchOne = 'https://maps.googleapis.com/maps/api/place/findplacefromtext/json?key=' + apiKey + '&input=late%20night%20restaurants&inputtype=textquery&locationbias=ipbias';
+
 // const urlList = ['http://localhost:3000', fetchOne];
 
 

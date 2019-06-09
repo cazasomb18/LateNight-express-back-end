@@ -14,7 +14,7 @@ const Restaurant = require('../models/restaurant.js')
 router.get('/', async (req, res, next) => {
 	try {
 		const user = await User.findOne({userName: req.body.userName})
-///I changed this to a GET ROUTE, and switched the mongoose method ot findOne
+///I changed this to a GET ROUTE, and switched the mongoose method to findOne
 ///instead of create, now this route checks to see if req.body matches the dbentry
 ///and sends res.json() accordingly.
 		if (user.userName === req.body.userName){
@@ -31,7 +31,7 @@ router.get('/', async (req, res, next) => {
 			});
 			console.log(res.json);
 		}
-	}catch (err){
+	}catch(err){
 		console.error(err);
 		next(err);
 	}
@@ -54,7 +54,7 @@ router.get('/usercomments', async (req, res, next) => {
 			console.log('This is found User');
 			console.log('==================');
 			if (foundUser){
-				const foundRestaurants = await Restaurant.find({userName: req.session.userName});
+				const foundRestaurants = await Restaurant.find({userName: req.session.userName}).populate('comments');
 				const foundComments = await Comment.find({commentAuthor: req.session.userName})
 				console.log(foundRestaurants);
 				console.log(foundComments);
@@ -79,7 +79,8 @@ router.get('/usercomments', async (req, res, next) => {
 		next(err);
 	}
 });
-///end of auth/get/usercomments GET route - WHY ISN'T THIS WORKING???
+///end of auth/get/usercomments THIS IS RETURNING ALL USER DATA BUT NOT ALL OF IT... 
+/// DATA FROM PANDA EXPRESS restaurant_id: [ 5cfae5557e614cb8d68aacac is missing
 
 
 /// POST auth/login --> login user that isn't already logged in///
@@ -118,7 +119,7 @@ router.post('/login', async (req, res, next) => {
 			success: false
 		})
 		console.log(res.json.data);
-		console.log(res.session.message);
+		console.log(req.session.message);
 	}
 });
 /////////END of POST auth/login///////

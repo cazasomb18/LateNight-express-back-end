@@ -15,9 +15,9 @@ const Restaurant 		= require('../models/restaurant.js');
 
 
 
+
 ///FUNCTION OF THIS ROUTE IS TO GET ALL COMMENTS MADE ON A PARTICULAR RESTAURANT///
 ///start of comment GET '/restaurants/show' ROUTE ///
-
 
 ////there is an issue here - this route is returning ALL COMMENTS made.////
 router.get('/restaurants/:place_id', async (req, res, next) => {
@@ -115,17 +115,36 @@ router.put('/restaurants/:place_id/edit/:comment_id', async (req, res, next) => 
 /////////////// comment DELETE '/:id' ROUTE ///////////////
 router.delete('/restaurants/:place_id/:comment_id', async (req, res, next) => {
 	try{
-		const foundRestaurant = await Restaurant.findOne({place_id: req.params.place_id});
-		const foundComments  = await Comment.find({place_id: req.params.place_id});
+		const foundRestaurant = await Restaurant.findOne({place_id: req.params.place_id}).populate('comments');
+		// const foundComments  = await Comment.find({place_id: req.params.place_id});
 		console.log('FOUND RESTAURANT: ', foundRestaurant);
-		console.log('THESE ARE THE FOUND COMMENTS', foundComments);
+		console.log('THESE ARE THE FOUND COMMENTS', foundRestaurant.comments);
+		
 		let index;
-		for (let i = 0; i < foundComments.length; i++){
-			if (foundComments.id[i] === req.params.comment_id){
+
+		for (let i = 0; i < foundRestaurant.comments.length; i++){
+			if (foundRestaurant.comments[i]._id.toString() === req.params.comment_id) {
 				index = i;
 			}
 		}
-		await foundComments.slice(index, 1);
+		
+		foundRestaurant.comments.splice(index, 1);
+
+
+		const foundUser = await User.findOne({userName: req.session.userName});
+
+		let index2;
+
+		for (let i = 0; i < foundUser.comments.length; i++) {
+			if (foundUser.comments[i]._id.toString() === req.params.comment_id) {
+				index2 = i
+			}
+		}
+
+		foundUser.comments.splice(index2, 1);
+
+		await foundUser.save()
+
 		const deletedComment = await Comment.findByIdAndRemove(req.params.comment_id);
 		console.log("+++++++++++++++++++++++");
 		console.log(`${deletedComment}, <======== will be deleted by the comment DELETE ROUTE`);
@@ -133,15 +152,23 @@ router.delete('/restaurants/:place_id/:comment_id', async (req, res, next) => {
 		console.log("\nhere's the restaurant after delete")
 		console.log(foundRestaurant);
 
-		// find ref to comment (deletedComment._id)
-		// remove that comment(ref) from foundRestaurant's comments array
-		// find index of element in foundRestaurant's comments array with id = deletedComment._id
-		// splice it out
-
+		// const id = deletedComment._id;
+		// // find ref to comment (deletedComment._id)
+		// const refToComment = await Comment.findOne(id);
+		// // find index of element in foundRestaurant's comments array with id = deletedComment._id
+		// // splice it out
+		// await foundRestaurant.comments.splice(refToComment, 1);
+		// // remove that comment(ref) from foundRestaurant's comments array
+		// if (foundRestaurant.comments.length === 0){
+		// 	await Restaurant.findByIdAndRemove({id: req.params.place_id})
+		// }
 		// after you splice it out, if the array has 0 length, delete the restaurant
 		// await Restaurant.findByIdAndRemove(....)
 
 		await foundRestaurant.save();
+		
+		console.log("here is restaurant WITHOUT the ref to the comment that was deleted")
+		console.log(foundRestaurant);
 
 		res.status(200).json(deletedComment);
 	}catch(err){
