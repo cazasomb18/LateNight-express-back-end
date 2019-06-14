@@ -18,8 +18,6 @@ const Restaurant 		= require('../models/restaurant.js');
 
 ///FUNCTION OF THIS ROUTE IS TO GET ALL COMMENTS MADE ON A PARTICULAR RESTAURANT///
 ///start of comment GET '/restaurants/show' ROUTE ///
-
-////there is an issue here - this route is returning ALL COMMENTS made.////
 router.get('/restaurants/:place_id', async (req, res, next) => {
 	try {
 		let theRestaurant;

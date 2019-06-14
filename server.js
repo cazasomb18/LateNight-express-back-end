@@ -16,7 +16,7 @@ require('es6-promise').polyfill();
 require('./db/db.js');
 
 app.use(session({
-	secret: 'asdlkfjastiuqewap4oihjaskflkdsfjlahgkjhgl',
+	secret: process.env.SESSION_SECRET,
 	resave: false,
 	saveUninitialized: false
 }));
@@ -39,13 +39,6 @@ app.use((req, res, next) => {
 app.use(bodyParser.urlencoded({extended: false}));
 
 app.use(bodyParser.json());
-
-
-// const urlList = ['http://localhost:3000', fetchOne];
-
-
-
-// const backEndUrl = 'http://localhost:3000';
 
 const corsOptions = {
   origin: process.env.BACK_END_URL, // when you deploy your react app, this is where you put the address,
@@ -96,7 +89,7 @@ app.use('/auth', authController);
 app.use('/comment', commentController);
 
 
-app.listen(process.env.PORT || 9000, () => {
+app.listen(process.env.PORT, () => {
 	console.log('BOOM!!! listening on port 9000');
 });
 

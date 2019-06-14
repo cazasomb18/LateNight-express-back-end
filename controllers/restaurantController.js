@@ -52,31 +52,6 @@ router.get('/nearby', async (req, res, next) => {
 })
 ///// END OF restaurants/nearby GET route '/ /////
 
-///////////////GET '/:id' restaurants show route -- returns details about restaurants
-	///PURPOSE OF THIS ROUTE = GATHER PLACE_ID IN ORDER TO FETCH 2ND API CALL WHICH WILL RETURN
-	///DETAILED INFORMATION ABOUT THAT PARTICULAR RESTAURANT THE USER SELECTED/////////
-// router.get('/:place_id', async (req, res, next) => {
-// 	try {
-// 		console.log(req.session, "this is req.session")
-// 		console.log('+++++++++++++++++++++++++++++')
-// 		console.log('HITTING restaurants GET /:place_ID ROUTE')
-// 		console.log('this is req.body: ', req.body)
-// 		console.log('==============================')
-// 		const response = await fetch('https://maps.googleapis.com/maps/api/place/details/json?placeid=' + req.params.place_id + '&fields=name,formatted_address,place_id&key=' + apiKey);
-// 		const parsedRestDeetResponse = await response.json();
-// 		JSON.stringify(parsedRestDeetResponse);
-// 		res.json(parsedRestDeetResponse);
-// 		console.log('===========THIS IS RESPONSE++++++++++++')
-// 		console.log(parsedRestDeetResponse);
-// 		console.log('===========THIS IS RESPONSE++++++++++++')
-// 	}catch(err){
-// 		console.log(err);
-// 		console.error(err);
-// 	}
-// });
-//////////////////////END of GET '/:place_id' restaurants show route//////////////////////
-
-
 ///PURPOSE OF THIS ROUTE = 1.) create mongoDB entry when route is hit 
 ///						   2.) populate comments on that db entry
 /////////////////////start of POST '/:place_id/comment' restaurants route///////////////

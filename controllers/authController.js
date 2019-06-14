@@ -37,7 +37,6 @@ router.get('/', async (req, res, next) => {
 	}
 });
 /////END OF auth/ GET route --- checks for user in DB//////
-///could i maybe use this route to validate the current user and THEN hit the below endpoint???///
 
 
 ///this route returns all comments made by a user's session///
@@ -80,7 +79,6 @@ router.get('/usercomments', async (req, res, next) => {
 	}
 });
 ///end of auth/get/usercomments THIS IS RETURNING ALL USER DATA BUT NOT ALL OF IT... 
-/// DATA FROM PANDA EXPRESS restaurant_id: [ 5cfae5557e614cb8d68aacac is missing
 
 
 /// POST auth/login --> login user that isn't already logged in///
