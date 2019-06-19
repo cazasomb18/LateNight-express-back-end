@@ -44,8 +44,8 @@ router.get('/usercomments', async (req, res, next) => {
 	try{
 		if (req.session.logged === true){
 			console.log('==================');
-			console.log(req.session);
 			console.log('This is req.session');
+			console.log(req.session);
 			console.log('==================');
 			const foundUser = await User.findOne({userName: req.session.userName})
 			console.log('==================');
@@ -90,7 +90,7 @@ router.post('/login', async (req, res, next) => {
 		console.log(req.session);
 		const passwordMatch = bcrypt.compareSync(req.body.password, foundUser.password)
 		if (passwordMatch){
-				req.session.message = '',
+				req.session.message = '';
 				req.session.logged = true;
 				req.session.userName = req.body.userName;
 				req.session.message = 'Username and password matches';

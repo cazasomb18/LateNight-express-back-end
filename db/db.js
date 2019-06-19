@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost/lateNight', {
+mongoose.connect(process.env.MONGODB, {
 	useNewUrlParser: true,
 	useCreateIndex: true,
 	useFindAndModify: false

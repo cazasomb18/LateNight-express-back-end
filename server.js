@@ -90,7 +90,7 @@ app.use('/comment', commentController);
 
 
 app.listen(process.env.PORT, () => {
-	console.log('BOOM!!! listening on port 9000');
+	console.log('BOOM!!! listening on PORT: ---- ');
 });
 
 module.exports = app;
