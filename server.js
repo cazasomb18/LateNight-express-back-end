@@ -41,7 +41,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 const corsOptions = {
-  origin: process.env.BACK_END_URL, // when you deploy your react app, this is where you put the address,
+  origin: process.env.HEROKU_URL, // when you deploy your react app, this is where you put the address,
   credentials: true, // allowing cookies to be sent with requests from the client (session cookie),
   optionsSuccessStatus: 200 // some legacy browsers IE11 choke on a 204, and options requests
 }
