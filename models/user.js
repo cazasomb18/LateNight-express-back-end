@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+const connectionString = process.env.MONGODB_URI;
+
 const UserSchema = new mongoose.Schema({
 	userName: { type: String, required: true},
 	password: {type: String, required: true},

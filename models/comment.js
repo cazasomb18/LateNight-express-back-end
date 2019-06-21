@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const connectionString = 'mongodb://localhost/lateNight';
+const connectionString = process.env.MONGODB_URI;
 
 const commentSchema = new mongoose.Schema({
 	commentBody: String,

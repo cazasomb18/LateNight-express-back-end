@@ -41,13 +41,12 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 const corsOptions = {
-  origin: 'https://latenight-backend.herokuapp.com', // when you deploy your react app, this is where you put the address,
+  origin: process.env.BACK_END_URL, // when you deploy your react app, this is where you put the address,
   credentials: true, // allowing cookies to be sent with requests from the client (session cookie),
   optionsSuccessStatus: 200 // some legacy browsers IE11 choke on a 204, and options requests
 }
-app.use(cors(corsOptions));
 
-
+// const urlList = [process.env.BACKEND_URL,process.env.HEROKU_BACKEND_URL, process.env.HEROKU_URL]
 
 
 // const corsOptions = {
@@ -57,28 +56,13 @@ app.use(cors(corsOptions));
 // 		} else {
 // 			callback(Error('Not allowed by CORS'))
 // 		}
-// 	}
+// 	},
+// 	credentials: true,
+// 	optionsSuccessStatus: 200
 // };
 
-// app.use(cors({
-// 	corsOptions,
-// 	optionsSuccessStatus: 200,
-// 	credentials: true
-// }));
+app.use(cors(corsOptions));
 
-
-// app.use(cors({
-// 	origin: function(origin, callback){
-// 		if(urlList.indexOf(origin) !== -1){
-// 			callback(null, true)
-// 		} else{
-// 			callback(new Error('URL not authorized by cors'))
-// 		}
-
-// 	},
-// 	optionsSuccessStatus: 200,
-// 	credentials: true
-// }));
 
 const restaurantController = require('./controllers/restaurantController.js');
 const authController = require('./controllers/authController.js');
