@@ -41,7 +41,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 const corsOptions = {
-  origin: process.env.HEROKU_BACKEND_URL,
+  origin: process.env.HEROKU_URL,
   credentials: true,
   optionsSuccessStatus: 200
 }
