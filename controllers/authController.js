@@ -44,13 +44,11 @@ router.get('/usercomments', async (req, res, next) => {
 	try{
 		if (req.session.logged === true){
 			console.log('==================');
-			console.log('This is req.session');
-			console.log(req.session);
+			console.log('This is req.session: ', req.session);
 			console.log('==================');
 			const foundUser = await User.findOne({userName: req.session.userName})
 			console.log('==================');
-			console.log(foundUser);
-			console.log('This is found User');
+			console.log('This is found User: ', foundUser);
 			console.log('==================');
 			if (foundUser){
 				const foundRestaurants = await Restaurant.find({userName: req.session.userName}).populate('comments');
@@ -70,7 +68,7 @@ router.get('/usercomments', async (req, res, next) => {
 		} else {
 			res.json({
 				status: 400,
-				data: 'no user session found'
+				data: 'no session found'
 			})
 		}
 	}catch(err){
@@ -112,7 +110,7 @@ router.post('/login', async (req, res, next) => {
 	} else {
 		req.session.message = "There were no users under that username. Please register.",
 		res.json({
-			status: 200,
+			status: 400,
 			data: "There were no users under that username. Please register.",
 			success: false
 		})
@@ -129,12 +127,16 @@ router.post('/register', async (req, res, next) => {
 	try {
 		console.log('hitting POST route auth/register');
 		const userCheck = await User.findOne({userName: req.body.userName});
+		const emailCheck = await User.findOne({email: req.body.email});
+		req.session.message = '';
 		if(userCheck) {
-			req.session.message = '';
-			req.session.message = "This username is already in use.";
+			req.session.message = "This username or email is already in use.";
 			console.log(req.session.message);
-			console.log("This username is already in use.");
-		} else {
+			res.json({
+				status: 400,
+				data: "This username or email is already in use."
+			})
+		}else {
 			req.session.message = '';
 			const password = req.body.password;
 			console.log(password);
@@ -149,14 +151,14 @@ router.post('/register', async (req, res, next) => {
 			req.session.userName = req.body.userName;
 			req.session.logged = true;
 			req.session.message = "New user" + req.body.userName + "has been registered registered.";
-			username = JSON.stringify(user);
+			newUser = JSON.stringify(user);
 			res.json({
 				status: 200,
-				data: user,
+				data: newUser,
 				registered: true
 			})
 		}
-	} catch(err) {
+	}catch(err) {
 		next(err)
 	}
 });
@@ -177,7 +179,7 @@ router.get('/logout', (req, res, next) => {
 			})
 			console.log("User has successfully logged out");
 		}
-	})	
+	})
 });
 /// END of auth/logout route (destroy session) ///
 

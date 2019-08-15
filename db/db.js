@@ -11,7 +11,7 @@ mongoose.connection.on('connected', () => {
 });
 
 mongoose.connection.on('error', (err) => {
-	console.error(err, 'MONGOOSE HAS EXPERIENCED AN ERROR');
+	console.error(`${err}, 'MONGOOSE HAS EXPERIENCED AN ERROR`);
 });
 
 mongoose.connection.on('disconnected', (err) => {

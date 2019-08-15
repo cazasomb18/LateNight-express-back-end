@@ -41,25 +41,10 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 const corsOptions = {
-  origin: process.env.HEROKU_URL, // when you deploy your react app, this is where you put the address,
-  credentials: true, // allowing cookies to be sent with requests from the client (session cookie),
-  optionsSuccessStatus: 200 // some legacy browsers IE11 choke on a 204, and options requests
+  origin: process.env.HEROKU_BACKEND_URL,
+  credentials: true,
+  optionsSuccessStatus: 200
 }
-
-// const urlList = [process.env.BACKEND_URL,process.env.HEROKU_BACKEND_URL, process.env.HEROKU_URL]
-
-
-// const corsOptions = {
-// 	origin: function (origin, callback){
-// 		if (urlList.indexOf(origin) !== -1){
-// 			callback(null, true)
-// 		} else {
-// 			callback(Error('Not allowed by CORS'))
-// 		}
-// 	},
-// 	credentials: true,
-// 	optionsSuccessStatus: 200
-// };
 
 app.use(cors(corsOptions));
 
@@ -74,7 +59,7 @@ app.use('/comment', commentController);
 
 
 app.listen(process.env.PORT, () => {
-	console.log('BOOM!!! listening on PORT: ---- ');
+	console.log('BOOM!! listening on PORT: ---- ');
 });
 
 module.exports = app;

@@ -54,6 +54,7 @@ router.get('/nearby', async (req, res, next) => {
 /////////////////////start of POST '/:place_id/comment' restaurants route///////////////
 router.post('/:place_id/comment', async (req, res, next) => {
 	try{
+
 		let theRestaurant;
 		let theComment;
 		const foundRestaurant = await Restaurant.findOne({place_id: req.params.place_id});
@@ -61,16 +62,18 @@ router.post('/:place_id/comment', async (req, res, next) => {
 		const restaurantId = await Restaurant.findOne({place_id: req.params.place_id});
 		if (!foundRestaurant) {
 			const createdRestaurant = await Restaurant.create({
+
 				name: req.body.name,
 				address: req.body.vicinity,
 				place_id: req.params.place_id,
 				userName: req.session.userName
 
 			})
+
 			theRestaurant = createdRestaurant;
 			console.log("Created Restaurant: ", createdRestaurant);
 			console.log('======================================================');
-			console.log(`${createdRestaurant} <==== createdRestaurant in GET'/restaurant/:place_id ROUTE`);
+			console.log(`${createdRestaurant} <==== we have just created this restaurant in GET'/restaurant/:place_id ROUTE`);
 			console.log('======================================================');
 			const createdComment = await Comment.create({
 
@@ -92,20 +95,24 @@ router.post('/:place_id/comment', async (req, res, next) => {
 
 			JSON.stringify(createdRestaurant);
 			res.status(200).json({
+
 				restaurant: createdRestaurant, newComment: theComment
+
 			})
-		} else if (foundRestaurant) {
+		} if (foundRestaurant) {
 			const createdComment = await Comment.create({
-					restaurant_id: foundRestaurant.id,
+
+					restaurant_id: foundRestaurant._id,
 					restaurant_name: foundRestaurant.name,
 					commentBody: req.body.commentBody,
 					commentAuthor: req.session.userName
+
 				})
 			console.log("foundRestaurant updated with new comments: ", foundRestaurant);
 			foundRestaurant.comments.push(createdComment);
 			await foundRestaurant.save();
-			theComment = createdComment;
 			console.log('=========var theRestaurant saved======');
+			theComment = createdComment;
 			JSON.stringify(foundRestaurant);
 			res.status(200).json({
 					restaurant: foundRestaurant, 
@@ -122,7 +129,6 @@ router.post('/:place_id/comment', async (req, res, next) => {
 	}catch(err) {
 		next(err);
 		console.error(err);
-		console.log(err);
 	}
 });
 /////////////////////END of POST '/:place_id/comment' restaurants route///////////////
