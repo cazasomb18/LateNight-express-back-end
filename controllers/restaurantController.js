@@ -39,6 +39,7 @@ router.get('/nearby', async (req, res, next) => {
 		
 		let parsedNearbyResponse = await nearbySearchResponse.json();
 
+		//if search results w/in 2k yield no results then broaden the radius to 10k///
 		if (parsedNearbyResponse.status === 'ZERO_RESULTS') {
 
 			nearbySearchResponse = await fetch(process.env.GEO_LOC_API_URL + req.query.searchTerm + process.env.GEO_LOC_API_FIELDS_LARGER + process.env.API_KEY);
