@@ -53,8 +53,8 @@ router.get('/usercomments', async (req, res, next) => {
 			if (foundUser){
 				const foundRestaurants = await Restaurant.find({userName: req.session.userName}).populate('comments');
 				const foundComments = await Comment.find({commentAuthor: req.session.userName})
-				console.log(foundRestaurants);
-				console.log(foundComments);
+				console.log("foundRestaurants: ", foundRestaurants);
+				console.log("foundComments: ", foundComments);
 				res.json({
 					status: 200,
 					data: foundRestaurants, foundComments

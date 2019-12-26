@@ -35,15 +35,36 @@ router.get('/nearby', async (req, res, next) => {
 		let lat = req.query.searchTerm;
 		console.log(lat);
 		console.log('^-- Query');
-		const nearbySearchResponse = await fetch(process.env.GEO_LOC_API_URL + req.query.searchTerm + process.env.GEO_LOC_API_FIELDS + process.env.API_KEY);
-		parsedNearbyResponse = await nearbySearchResponse.json();
-		JSON.stringify(parsedNearbyResponse);
-		res.json({
-			status: 200,
-			data: parsedNearbyResponse
-		})
-		console.log(parsedNearbyResponse)
-	}catch{
+		let nearbySearchResponse = await fetch(process.env.GEO_LOC_API_URL + req.query.searchTerm + process.env.GEO_LOC_API_FIELDS + process.env.API_KEY);
+		
+		let parsedNearbyResponse = await nearbySearchResponse.json();
+
+		if (parsedNearbyResponse.status === 'ZERO_RESULTS') {
+
+			nearbySearchResponse = await fetch(process.env.GEO_LOC_API_URL + req.query.searchTerm + process.env.GEO_LOC_API_FIELDS_LARGER + process.env.API_KEY);
+
+			parsedNearbyResponse = await nearbySearchResponse.json();
+
+			JSON.stringify(parsedNearbyResponse);
+
+			res.json({
+				status: 200,
+				data: parsedNearbyResponse
+			})
+
+		} else {
+
+			JSON.stringify(parsedNearbyResponse);
+
+			res.json({
+				status: 200,
+				data: parsedNearbyResponse
+			})
+			console.log(parsedNearbyResponse);
+
+		}
+
+	}catch(err){
 		console.error(err)
 	}
 })
