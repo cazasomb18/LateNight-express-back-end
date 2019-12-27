@@ -6,8 +6,18 @@ const User = require('../models/user')
 require('dotenv').config();
 require('isomorphic-fetch');
 require('es6-promise').polyfill();
+const NodeGeocoder = require('node-geocoder');
 const apiUrl = process.env.API_URL;
 const apiKey = process.env.API_KEY;
+
+const options = {
+	provider: 'google',
+	httpAdapter: 'https',
+	apiKey: apiKey,
+	formatter: null
+}
+
+const geocoder = NodeGeocoder(options);
 
 /// GET '/' restaurants GETS all DATA for ALL restaurants matching query ///
 router.get('/', async (req, res, next) => {
@@ -33,11 +43,14 @@ router.get('/', async (req, res, next) => {
 router.get('/nearby', async (req, res, next) => {
 	try{
 		let lat = req.query.searchTerm;
-		console.log(lat);
-		console.log('^-- Query');
+		// console.log(lat);
+		// console.log('^-- Query');
 		let nearbySearchResponse = await fetch(process.env.GEO_LOC_API_URL + req.query.searchTerm + process.env.GEO_LOC_API_FIELDS + process.env.API_KEY);
 		
 		let parsedNearbyResponse = await nearbySearchResponse.json();
+
+		let resultLatLng;
+
 
 		//if search results w/in 2k yield no results then broaden the radius to 10k///
 		if (parsedNearbyResponse.status === 'ZERO_RESULTS') {
@@ -46,23 +59,32 @@ router.get('/nearby', async (req, res, next) => {
 
 			parsedNearbyResponse = await nearbySearchResponse.json();
 
-			JSON.stringify(parsedNearbyResponse);
+			resultLatLng = await parsedNearbyResponse.results.map((props, i) => {
+				return parsedNearbyResponse.results[i].geometry.location;
+			});
+
+			JSON.stringify(parsedNearbyResponse, resultLatLng);
 
 			res.json({
 				status: 200,
-				data: parsedNearbyResponse
+				data: parsedNearbyResponse,
+				resultLatLng: resultLatLng
 			})
 
 		} else {
 
-			JSON.stringify(parsedNearbyResponse);
+			resultLatLng = await parsedNearbyResponse.results.map((props, i) => {
+				return parsedNearbyResponse.results[i].geometry.location;
+			});
+
+			JSON.stringify(parsedNearbyResponse, resultLatLng);
 
 			res.json({
 				status: 200,
-				data: parsedNearbyResponse
+				data: parsedNearbyResponse,
+				resultLatLng: resultLatLng
 			})
-			console.log(parsedNearbyResponse);
-
+			// console.log(parsedNearbyResponse);
 		}
 
 	}catch(err){
@@ -79,10 +101,19 @@ router.post('/:place_id/comment', async (req, res, next) => {
 
 		let theRestaurant;
 		let theComment;
+
 		const foundRestaurant = await Restaurant.findOne({place_id: req.params.place_id});
+
 		console.log("Found Restaurant: ", foundRestaurant);
+
 		const restaurantId = await Restaurant.findOne({place_id: req.params.place_id});
+
+		console.log("req.body: ", req.body);
+
 		if (!foundRestaurant) {
+
+			console.log("req.body: ", req.body);
+
 			const createdRestaurant = await Restaurant.create({
 
 				name: req.body.name,
