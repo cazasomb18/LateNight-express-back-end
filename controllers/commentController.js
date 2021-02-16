@@ -1,4 +1,3 @@
-/// node modules ///
 const express 			= require('express');
 const router 			= express.Router();
 const mongoose 			= require('mongoose');
@@ -11,40 +10,34 @@ const session 			= require('express-session');
 const User 				= require('../models/user.js');
 const Comment 			= require('../models/comment.js');
 const Restaurant 		= require('../models/restaurant.js');
-/// require models ///
 
 
 
 
-///FUNCTION OF THIS ROUTE IS TO GET ALL COMMENTS MADE ON A PARTICULAR RESTAURANT///
+//GET ALL COMMENTS MADE ON A PARTICULAR RESTAURANT///
 ///start of comment GET '/restaurants/show' ROUTE ///
 router.get('/restaurants/:place_id', async (req, res, next) => {
 	try {
 		let theRestaurant;
-		console.log('This is req.session', req.session);
 
-		const foundRestaurant = await Restaurant.find({place_id: req.params.place_id}).populate('comments');
-		console.log(foundRestaurant);
+		const foundRestaurant = await Restaurant.findOne({ place_id: req.params.place_id}).populate('comments').exec();
+		console.log("\nfoundRestaurant: ", foundRestaurant);
 
 		if (foundRestaurant){
-			const foundComments = await Comment.find({place_id: req.params.comments});
-			console.log("================");
-			console.log({foundComments}, " <====== comments found on " + req.params.id + " GET restaurants/:place_id route");
-			console.log('THESE ARE THE FOUND COMMENTS');
-			console.log("================");
-			console.log(foundComments, " <====== comments found on " + req.params.place_id + " GET restaurants/:place_id route");
-			console.log("================");
+
 			await res.json({
 				status: 200,
-				data: 'comments found on restaurant place_id: ' + req.params.place_id + " in GET restaurants/:place_id route"
+				data: foundRestaurant.comments
 			})
 
-		} else {
-			console.log('THERE WAS NO RESTAURANT FOUND');
+		}
+		if (!foundRestaurant) {
+
 			await res.json({
 				status: 400,
-				data: "no restaurant could be found"
+				data: "THERE WAS NO RESTAURANT FOUND"
 			})
+			console.log('THERE WAS NO RESTAURANT FOUND');
 		}
 
 	}catch(err){
@@ -54,24 +47,22 @@ router.get('/restaurants/:place_id', async (req, res, next) => {
 });
 ///END of comment GET '/restaurants/show' ROUTE ///
 
-
-//////PURPOSE OF THIS ROUTE IS FOR USERS TO EDIT COMMENTS///////
+///EDIT COMMENTS MADE BY A USER///////
 /////////////start of comment PUT '/:place_id/edit' ROUTE /////////////
 router.put('/restaurants/:place_id/edit/:comment_id', async (req, res, next) => {
 	try{
 		console.log('This is req.session', req.session);
 		const foundRestaurant = await Restaurant.findOne({place_id: req.params.place_id}).populate('comments');
-		console.log(foundRestaurant);
-		console.log('THIS IS THE FOUND RESTAURANT');
-		const foundComment = await Comment.find({place_id: req.params.id});
-		console.log('THESE ARE THE FOUND COMMENTS');
-		console.log(foundComment);
+		console.log("THIS IS THE FOUND RESTAURANT: ", foundRestaurant);
+		const foundComment = await Comment.find({place_id: req.params.place_id});
+		console.log('THIS IS THE FOUND COMMENT: ', foundcomment);
 		const updatedComment = await Comment.findByIdAndUpdate(req.params.comment_id, req.body, {new: true});
 		console.log("THIS IS THE UPDATED COMMENT: ", updatedComment);
 		console.log("==================");
 		console.log(`${{updatedComment}} <=========== has been found in comment PUT '/:place_id/edit ROUTE`);
 		console.log("==================");
 		res.status(200).json({updatedComment});
+			// ok: true
 	}catch(err){
 		next(err)
 	}
@@ -79,7 +70,7 @@ router.put('/restaurants/:place_id/edit/:comment_id', async (req, res, next) => 
 ///////////////////// END of comment EDIT '/:id' ROUTE /////////////////////
 
 
-///PURPOSE OF THIS ROUTE IS TO DELETE COMMENTS MADE BY A USER//////
+///DELETE COMMENTS MADE BY A USER//////
 /////////////// comment DELETE '/:id' ROUTE ///////////////
 router.delete('/restaurants/:place_id/:comment_id', async (req, res, next) => {
 	try{

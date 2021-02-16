@@ -10,24 +10,21 @@ const User 				= require('../models/user.js');
 const Comment = require('../models/comment.js')
 const Restaurant = require('../models/restaurant.js')
 
-/////auth GET route --- checks for user in DB//////
+/////auth GET route --- checks for user in DB against req.body//////
 router.get('/', async (req, res, next) => {
 	try {
-		const user = await User.findOne({userName: req.body.userName})
-///I changed this to a GET ROUTE, and switched the mongoose method to findOne
-///instead of create, now this route checks to see if req.body matches the dbentry
-///and sends res.json() accordingly.
+		const user = await User.findOne({ userName: req.body.userName })
+
 		if (user.userName === req.body.userName){
 			res.json({
 				status: 200,
 				data: 'user has been found'
 			});
 			console.log(res.json);
-		} else {
-			req.session.logged === false;
+		} if (user.userName !== req.body.userName) {
 			res.json({
 				status: 400,
-				data: 'no user has been found'
+				data: 'no user was been found'
 			});
 			console.log(res.json);
 		}
@@ -39,36 +36,36 @@ router.get('/', async (req, res, next) => {
 /////END OF auth/ GET route --- checks for user in DB//////
 
 
-///this route returns all comments made by a user's session///
-router.get('/usercomments', async (req, res, next) => {
+///this route returns all comments made by a user///
+router.get('/usercomments/:_id', async (req, res, next) => {
 	try{
-		if (req.session.logged === true){
-			console.log('==================');
-			console.log('This is req.session: ', req.session);
-			console.log('==================');
-			const foundUser = await User.findOne({userName: req.session.userName})
+		if (req.session.id ) {
+
+			const foundUser = await User.findOne({ _id: req.params._id })
 			console.log('==================');
 			console.log('This is found User: ', foundUser);
 			console.log('==================');
 			if (foundUser){
-				const foundRestaurants = await Restaurant.find({userName: req.session.userName}).populate('comments');
-				const foundComments = await Comment.find({commentAuthor: req.session.userName})
+				const foundRestaurants = await Restaurant.find({ _id: foundUser._id});//.populate('comments');
+				const foundComments = await Comment.find({ commentAuthor: foundUser.userName });
 				console.log("foundRestaurants: ", foundRestaurants);
 				console.log("foundComments: ", foundComments);
 				res.json({
 					status: 200,
-					data: foundRestaurants, foundComments
+					data: { restaurants: foundRestaurants, comments: foundComments }
 				});
-			} else {
+			}
+			if (!foundUser) {
 				res.json({
 					status: 400,
 					data: 'no data found'
 				});
 			}
-		} else {
+		}
+		if (!req.session.id) {
 			res.json({
 				status: 400,
-				data: 'no session found'
+				data: 'session.id could not be found'
 			})
 		}
 	}catch(err){
@@ -81,16 +78,11 @@ router.get('/usercomments', async (req, res, next) => {
 
 /// POST auth/login --> login user that isn't already logged in///
 router.post('/login', async (req, res, next) => {
-	console.log('hitting POST ROUTE AUTH/LOGIN');
-	const foundUser = await User.findOne({userName: req.body.userName});
+	const foundUser = await User.findOne({ userName: req.body.userName });
 	if(foundUser) {
 		console.log('User has been found: ', foundUser);
-		console.log(req.session);
-		const passwordMatch = bcrypt.compareSync(req.body.password, foundUser.password)
+		const passwordMatch = bcrypt.compareSync(req.body.password, foundUser.password);
 		if (passwordMatch){
-				req.session.message = '';
-				req.session.logged = true;
-				req.session.userName = req.body.userName;
 				req.session.message = 'Username and password matches';
 				res.json({
 					status: 200,
@@ -99,22 +91,22 @@ router.post('/login', async (req, res, next) => {
 				})
 				console.log(req.body.userName + " has logged in successfully");
 				console.log(req.session.message);
-		} else {
-			req.session.message = "Username or password were incorrect";
+		} if (!passwordMatch) {
+			req.session.message = "Login failed. Username or password were incorrect";
 			res.json({
 				status: 400,
-				data: "Login failed. Username or password were incorrect",
+				data: req.session.message,
 				success: false
 			})
+			console.log(req.session.message);
 		}
-	} else {
-		req.session.message = "There were no users under that username. Please register.",
+	} if(!foundUser) {
+		req.session.message = "There were no users under that username. Please register."
 		res.json({
 			status: 400,
-			data: "There were no users under that username. Please register.",
+			data: req.session.message,
 			success: false
 		})
-		console.log(res.json.data);
 		console.log(req.session.message);
 	}
 });
@@ -125,38 +117,33 @@ router.post('/login', async (req, res, next) => {
 ///////// POST /auth/register --> sees if user exists and creates new one//////
 router.post('/register', async (req, res, next) => {
 	try {
-		console.log('hitting POST route auth/register');
-		const userCheck = await User.findOne({userName: req.body.userName});
-		const emailCheck = await User.findOne({email: req.body.email});
+		const userCheck = await User.findOne({ userName: req.body.userName });
+		const emailCheck = await User.findOne({ email: req.body.email });
 		req.session.message = '';
-		if(userCheck) {
+		if(userCheck || emailCheck) {
 			req.session.message = "This username or email is already in use.";
 			console.log(req.session.message);
 			res.json({
 				status: 400,
-				data: "This username or email is already in use."
+				data: req.session.message
 			})
-		}else {
-			req.session.message = '';
+		} else {
 			const password = req.body.password;
-			console.log(password);
-			const passwordHash = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
-			console.log(passwordHash);
+			const passwordHash = await bcrypt.hashSync(password, bcrypt.genSaltSync(10));
 			const userEntry = {};
 			userEntry.userName = req.body.userName;
 			userEntry.password = passwordHash;
-			userEntry.email = req.body.email
+			userEntry.email = req.body.email;
 			const user = await User.create(userEntry);
 			console.log(user);
-			req.session.userName = req.body.userName;
-			req.session.logged = true;
-			req.session.message = "New user" + req.body.userName + "has been registered registered.";
+			req.session.message = "New user" + req.body.userName + " has been registered registered.";
 			newUser = JSON.stringify(user);
 			res.json({
 				status: 200,
 				data: newUser,
 				registered: true
 			})
+			console.log(req.session.message);
 		}
 	}catch(err) {
 		next(err)

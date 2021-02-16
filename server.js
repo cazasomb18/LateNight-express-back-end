@@ -23,20 +23,18 @@ app.use(session({
 
 
 //// SET UP MIDDLEWARE, ANY CLIENT CAN MAKE REQUEST TO SERVER///
+app.use((req, res, next) => {
+	console.log("\n you just tried to :" + req.path);
+	// console.log("\n and here is req.session:");
+	// console.log(req.session);
+	next();
+})
+
+
 app.use(bodyParser.urlencoded({
 	extended: false
 }));
 
-
-app.use((req, res, next) => {
-	console.log("\n you just tried to :" + req.path);
-	console.log("\n and here is req.session:");
-	console.log(req.session);
-	next()
-})
-
-
-app.use(bodyParser.urlencoded({extended: false}));
 
 app.use(bodyParser.json());
 

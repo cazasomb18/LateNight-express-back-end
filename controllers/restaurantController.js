@@ -24,12 +24,10 @@ router.get('/', async (req, res, next) => {
 	try{
 		const response = await fetch(apiUrl + apiKey);
 		const allRestaurants = await response.json()
-		const parsedResponse = JSON.stringify(allRestaurants);
-		JSON.stringify(allRestaurants)
 		console.log('this is req.body: ', allRestaurants);
 		res.json({
 			status: 200,
-			data: 'restaurants have been found: ', allRestaurants
+			data: allRestaurants.results
 		})
 	}catch(err){
 		next(err)
@@ -43,15 +41,9 @@ router.get('/', async (req, res, next) => {
 router.get('/nearby', async (req, res, next) => {
 	try{
 		let lat = req.query.searchTerm;
-		// console.log(lat);
-		// console.log('^-- Query');
 		let nearbySearchResponse = await fetch(process.env.GEO_LOC_API_URL + req.query.searchTerm + process.env.GEO_LOC_API_FIELDS + process.env.API_KEY);
-		
 		let parsedNearbyResponse = await nearbySearchResponse.json();
-
 		let resultLatLng;
-
-
 		//if search results w/in 2k yield no results then broaden the radius to 10k///
 		if (parsedNearbyResponse.status === 'ZERO_RESULTS') {
 
@@ -59,19 +51,9 @@ router.get('/nearby', async (req, res, next) => {
 
 			parsedNearbyResponse = await nearbySearchResponse.json();
 
-			resultLatLng = await parsedNearbyResponse.results.map((props, i) => {
-				return parsedNearbyResponse.results[i].geometry.location;
-			});
-
-			JSON.stringify(parsedNearbyResponse, resultLatLng);
-
-			res.json({
-				status: 200,
-				data: parsedNearbyResponse,
-				resultLatLng: resultLatLng
-			})
-
-		} else {
+			// photoIDs = await parsedNearbyResponse.results.map(i => {
+			// 	return parsedNearbyResponse.results[i].photos[0].photo_reference;
+			// })
 
 			resultLatLng = await parsedNearbyResponse.results.map((props, i) => {
 				return parsedNearbyResponse.results[i].geometry.location;
@@ -84,8 +66,21 @@ router.get('/nearby', async (req, res, next) => {
 				data: parsedNearbyResponse,
 				resultLatLng: resultLatLng
 			})
-			// console.log(parsedNearbyResponse);
-		}
+
+		};
+
+		resultLatLng = await parsedNearbyResponse.results.map((props, i) => {
+			return parsedNearbyResponse.results[i].geometry.location;
+		});
+
+		JSON.stringify(parsedNearbyResponse, resultLatLng);
+
+		res.json({
+			status: 200,
+			data: parsedNearbyResponse,
+			resultLatLng: resultLatLng
+		})
+		console.log("restaurants/nearby GET REQUEST SUCCESSFUL");
 
 	}catch(err){
 		console.error(err)
@@ -93,91 +88,90 @@ router.get('/nearby', async (req, res, next) => {
 })
 ///// END OF restaurants/nearby GET route '/ /////
 
+
 ///PURPOSE OF THIS ROUTE = 1.) create mongoDB entry when route is hit 
 ///						   2.) populate comments on that db entry
 /////////////////////start of POST '/:place_id/comment' restaurants route///////////////
 router.post('/:place_id/comment', async (req, res, next) => {
 	try{
-
 		let theRestaurant;
 		let theComment;
 
-		const foundRestaurant = await Restaurant.findOne({place_id: req.params.place_id});
+		const foundRestaurant = await Restaurant.findOne({ place_id: req.params.place_id });
 
-		console.log("Found Restaurant: ", foundRestaurant);
-
-		const restaurantId = await Restaurant.findOne({place_id: req.params.place_id});
-
-		console.log("req.body: ", req.body);
+		console.log("\nFound Restaurant: ", foundRestaurant);
+		console.log("\nreq.body: ", req.body);
 
 		if (!foundRestaurant) {
-
-			console.log("req.body: ", req.body);
 
 			const createdRestaurant = await Restaurant.create({
 
 				name: req.body.name,
-				address: req.body.vicinity,
+				address: req.body.address,
 				place_id: req.params.place_id,
-				userName: req.session.userName
+				userName: req.body.commentAuthor
 
 			})
 
 			theRestaurant = createdRestaurant;
-			console.log("Created Restaurant: ", createdRestaurant);
-			console.log('======================================================');
-			console.log(`${createdRestaurant} <==== we have just created this restaurant in GET'/restaurant/:place_id ROUTE`);
-			console.log('======================================================');
+
+			console.log(`\nCreated Restaurant: ${createdRestaurant} <==== we have just created this restaurant in GET'/restaurant/:place_id ROUTE`);
+
 			const createdComment = await Comment.create({
 
 				commentBody: req.body.commentBody,
-				commentAuthor: req.session.userName,
+				commentAuthor: req.body.commentAuthor,
 				restaurant_name: theRestaurant.name,
-				restaurant_id: theRestaurant.id
+				restaurant_id: theRestaurant._id
 
 			})
-			console.log('this restaurant didn\'t exist, we just created it: ', createdRestaurant);
-			createdRestaurant.comments.push(createdComment);
-			await createdRestaurant.save();
-			theComment = createdComment;
-			const foundUser = await User.findOne({userName: req.session.userName})
-			console.log("\n we just tried to find the user based on session: ", foundUser);
-			foundUser.comments.push(createdComment)
-			await foundUser.save()
-			console.log('=========var theRestaurant saved======');
 
-			JSON.stringify(createdRestaurant);
+			createdRestaurant.comments.push(createdComment);
+
+			await createdRestaurant.save();
+
+			theComment = createdComment;
+
+			const foundUser = await User.findOne({ userName: req.body.commentAuthor });
+
+			foundUser.comments.push(createdComment);
+
+			await foundUser.save();
+
+			console.log('\n=========var foundUser saved======');
+
 			res.status(200).json({
 
-				restaurant: createdRestaurant, newComment: theComment
+				restaurant: theRestaurant,
+				newComment: theComment,
+				ok: true
 
 			})
+
 		} if (foundRestaurant) {
+
 			const createdComment = await Comment.create({
 
-					restaurant_id: foundRestaurant._id,
-					restaurant_name: foundRestaurant.name,
 					commentBody: req.body.commentBody,
-					commentAuthor: req.session.userName
+					commentAuthor: req.body.commentAuthor,
+					restaurant_name: foundRestaurant.name,
+					restaurant_id: foundRestaurant._id
 
 				})
-			console.log("foundRestaurant updated with new comments: ", foundRestaurant);
+
 			foundRestaurant.comments.push(createdComment);
+
 			await foundRestaurant.save();
-			console.log('=========var theRestaurant saved======');
-			theComment = createdComment;
-			JSON.stringify(foundRestaurant);
+
+			console.log("\n============ var foundRestaurant saved ============");
+			
 			res.status(200).json({
-					restaurant: foundRestaurant, 
-					newComment: theComment,
-					ok: true
+
+				restaurant: foundRestaurant, 
+				newComment: theComment,
+				ok: true
+
 			})
-		} else {
-			if(!restaurantId){
-				console.log('=======================');
-				console.log('no restaurant ID found!');
-				console.log('=======================');
-			}
 		}
 	}catch(err) {
 		next(err);
