@@ -180,5 +180,39 @@ router.post('/:place_id/comment', async (req, res, next) => {
 });
 /////////////////////END of POST '/:place_id/comment' restaurants route///////////////
 
+/// GET '/:place_id' restaurants GETS all DATA for ALL restaurants matching query ///
+router.get('/:place_id', async (req, res, next) => {
+	try{
+		const foundRestaurant = await Restaurant.findOne({ place_id: req.params.place_id });
+
+		if (foundRestaurant){
+
+			console.log(`\nfoundRestaurant: ${foundRestaurant}`);
+
+			res.json({
+				status: 200,
+				data: foundRestaurant
+			})
+		}
+
+		if (!foundRestaurant) {
+
+			const message = "NO RESTAURANT FOUND!";
+
+			res.json({
+				status: 400,
+				data: message
+			})
+
+			console.log(message);
+		}
+
+	}catch(err){
+		console.error(next(err));
+		console.error(err);
+	}
+});
+/////////////// END of GET '/' restaurants show route//////////////
+
 
 module.exports = router;
