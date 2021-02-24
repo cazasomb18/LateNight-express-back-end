@@ -1,11 +1,13 @@
-///require node_modules///
 const express 			= require('express');
+const compression		= require('compression');
 const router 			= express.Router();
 const mongoose 			= require('mongoose');
 const methodOverride 	= require('method-override');
 const bodyParser 		= require('body-parser');
 const bcrypt 			= require('bcrypt');
 const session 			= require('express-session');
+require('isomorphic-fetch');
+require('es6-promise').polyfill();
 const User 				= require('../models/user.js');
 const Comment = require('../models/comment.js')
 const Restaurant = require('../models/restaurant.js')
@@ -40,33 +42,32 @@ router.get('/', async (req, res, next) => {
 router.get('/usercomments/:_id', async (req, res, next) => {
 	try{
 		if (req.session.id ) {
-
-			const foundUser = await User.findOne({ _id: req.params._id })
-			console.log('==================');
-			console.log('This is found User: ', foundUser);
-			console.log('==================');
+			const foundUser = await User.findOne({ _id: req.params._id });
 			if (foundUser){
-				const foundRestaurants = await Restaurant.find({ _id: foundUser._id});//.populate('comments');
-				const foundComments = await Comment.find({ commentAuthor: foundUser.userName });
-				console.log("foundRestaurants: ", foundRestaurants);
-				console.log("foundComments: ", foundComments);
-				res.json({
-					status: 200,
-					data: { restaurants: foundRestaurants, comments: foundComments }
+				const foundRestaurants = await Restaurant.find({ userName: foundUser.userName }).populate('comments').exec();
+				const foundComments = await Comment.find({ commentAuthor: foundUser.userName }).populate('restaurants').exec();
+				console.log("\n COMMENTS AND RESTAURANTS FOUND!");
+				res.status(200).json({
+					data: {
+						restaurants: foundRestaurants, 
+						comments: foundComments
+					}
 				});
 			}
 			if (!foundUser) {
-				res.json({
-					status: 400,
-					data: 'no data found'
+				message = "No user found!"
+				res.status(400).json({
+					data: message
 				});
+				console.log(message);
 			}
 		}
 		if (!req.session.id) {
-			res.json({
-				status: 400,
-				data: 'session.id could not be found'
+			message = 'Session id could not be found!';
+			res.status(400).json({
+				data: message
 			})
+			console.log(message);
 		}
 	}catch(err){
 		console.error(err);
@@ -80,7 +81,6 @@ router.get('/usercomments/:_id', async (req, res, next) => {
 router.post('/login', async (req, res, next) => {
 	const foundUser = await User.findOne({ userName: req.body.userName });
 	if(foundUser) {
-		console.log('User has been found: ', foundUser);
 		const passwordMatch = bcrypt.compareSync(req.body.password, foundUser.password);
 		if (passwordMatch){
 				req.session.message = 'Username and password matches';
@@ -90,7 +90,6 @@ router.post('/login', async (req, res, next) => {
 					success: true
 				})
 				console.log(req.body.userName + " has logged in successfully");
-				console.log(req.session.message);
 		} if (!passwordMatch) {
 			req.session.message = "Login failed. Username or password were incorrect";
 			res.json({
@@ -146,7 +145,7 @@ router.post('/register', async (req, res, next) => {
 			console.log(req.session.message);
 		}
 	}catch(err) {
-		next(err)
+		console.error(next(err));
 	}
 });
 /// END of POST auth/register route///
@@ -157,7 +156,7 @@ router.post('/register', async (req, res, next) => {
 router.get('/logout', (req, res, next) => {
 	req.session.destroy((err) => {
 		if(err) {
-			next(err)
+			console.error(next(err));
 		} else {
 			res.json({
 				status:200,

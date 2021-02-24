@@ -25,13 +25,11 @@ router.get('/', async (req, res, next) => {
 		const response = await fetch(apiUrl + apiKey);
 		const allRestaurants = await response.json()
 		console.log('this is req.body: ', allRestaurants);
-		res.json({
-			status: 200,
+		res.status(200).json({
 			data: allRestaurants.results
 		})
 	}catch(err){
-		next(err)
-		console.error(err);
+		console.error(next(err));
 	}
 });
 /////////////// END of GET '/' restaurants show route//////////////
@@ -61,10 +59,10 @@ router.get('/nearby', async (req, res, next) => {
 
 			JSON.stringify(parsedNearbyResponse, resultLatLng);
 
-			res.json({
-				status: 200,
+			res.status(200).json({
 				data: parsedNearbyResponse,
-				resultLatLng: resultLatLng
+				resultLatLng: resultLatLng,
+				ok: true
 			})
 
 		};
@@ -75,15 +73,14 @@ router.get('/nearby', async (req, res, next) => {
 
 		JSON.stringify(parsedNearbyResponse, resultLatLng);
 
-		res.json({
-			status: 200,
+		res.status(200).json({
 			data: parsedNearbyResponse,
 			resultLatLng: resultLatLng
 		})
 		console.log("restaurants/nearby GET REQUEST SUCCESSFUL");
 
 	}catch(err){
-		console.error(err)
+		console.error(next(err));
 	}
 })
 ///// END OF restaurants/nearby GET route '/ /////
@@ -122,7 +119,7 @@ router.post('/:place_id/comment', async (req, res, next) => {
 				commentBody: req.body.commentBody,
 				commentAuthor: req.body.commentAuthor,
 				restaurant_name: theRestaurant.name,
-				restaurant_id: theRestaurant._id
+				restaurant_id: theRestaurant.id
 
 			})
 
@@ -143,8 +140,7 @@ router.post('/:place_id/comment', async (req, res, next) => {
 			res.status(200).json({
 
 				restaurant: theRestaurant,
-				newComment: theComment,
-				ok: true
+				newComment: theComment
 
 			})
 
@@ -155,7 +151,7 @@ router.post('/:place_id/comment', async (req, res, next) => {
 					commentBody: req.body.commentBody,
 					commentAuthor: req.body.commentAuthor,
 					restaurant_name: foundRestaurant.name,
-					restaurant_id: foundRestaurant._id
+					restaurant_id: foundRestaurant.id
 
 				})
 
@@ -168,51 +164,96 @@ router.post('/:place_id/comment', async (req, res, next) => {
 			res.status(200).json({
 
 				restaurant: foundRestaurant, 
-				newComment: theComment,
-				ok: true
+				newComment: theComment
 
 			})
 		}
 	}catch(err) {
-		next(err);
-		console.error(err);
+		console.error(next(err));
 	}
 });
 /////////////////////END of POST '/:place_id/comment' restaurants route///////////////
 
-/// GET '/:place_id' restaurants GETS all DATA for ALL restaurants matching query ///
+/// GET '/:place_id'  show route - restaurant data for a single mongoDB entry in Restaurant collection ///
+///// if no db entry then run googles places detail api w/ the place_id and create one in mongoDB and send result///
 router.get('/:place_id', async (req, res, next) => {
 	try{
 		const foundRestaurant = await Restaurant.findOne({ place_id: req.params.place_id });
 
 		if (foundRestaurant){
 
-			console.log(`\nfoundRestaurant: ${foundRestaurant}`);
-
-			res.json({
-				status: 200,
-				data: foundRestaurant
+			res.status(200).json({
+				data: foundRestaurant,
 			})
 		}
 
 		if (!foundRestaurant) {
 
-			const message = "NO RESTAURANT FOUND!";
+			let placesDetailResponse = await fetch(process.env.PLACES_DETAIL_URL + req.params.place_id + '&key=' + process.env.API_KEY);
 
-			res.json({
-				status: 400,
-				data: message
-			})
+			let parsedDetailResponse = await placesDetailResponse.json();
 
-			console.log(message);
+			if (parsedDetailResponse) {
+
+				let response = parsedDetailResponse.result;
+
+				let newRestaurant = {};
+
+				const createdRestaurant = await Restaurant.create({
+
+					name: response.name,
+					address: response.vicinity + ", " + response.address_components[5].long_name,
+					place_id: response.place_id,
+
+				});
+
+				console.log("\n<======== NEW RESTAURANT CREATED ========>");
+				console.log("\n\n\n", createdRestaurant, "\n\n\n");
+
+				await createdRestaurant.save();
+
+				newRestaurant = createdRestaurant;
+
+				res.status(200).json({
+					data: newRestaurant
+				})
+
+			}
+
+			if (!parsedDetailResponse) {
+				message = "Google Places Detail API query yielded no results with " + req.params.place_id;
+				res.status(400).json({
+					data: message
+				})
+				console.log(message);
+			}
 		}
+
 
 	}catch(err){
 		console.error(next(err));
-		console.error(err);
 	}
 });
-/////////////// END of GET '/' restaurants show route//////////////
+/////////////// END of GET '/:place_id' restaurants show route//////////////
+
+
+
+// ////// GET '/restaurant/:place_id,' show restaurant details on google places API
+// router.get('/restaurant/details/:place_id', async (req, res, next) => {
+// 	try{
+// 		let placesDetailResponse = await fetch(process.env.PLACES_DETAIL_URL + req.params.place_id + '&key=' + process.env.API_KEY)
+// 		console.log("\napi call successful!")
+// 		let parsedDetailResponse = await placesDetailResponse.json();
+// 		console.log("\nparsing successful!\n", parsedDetailResponse);
+// 		const restaurant = parsedDetailResponse.result;
+// 		res.status(200).json({
+// 			data: restaurant
+// 		})
+// 		console.log("\nREQUEST SUCCESSFUL!");
+// 	}catch(err){
+// 		console.error(next(err));
+// 	}
+// })
 
 
 module.exports = router;
