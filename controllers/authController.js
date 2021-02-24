@@ -70,8 +70,7 @@ router.get('/usercomments/:_id', async (req, res, next) => {
 			console.log(message);
 		}
 	}catch(err){
-		console.error(err);
-		next(err);
+		console.error(next(err));
 	}
 });
 ///end of auth/get/usercomments THIS IS RETURNING ALL USER DATA BUT NOT ALL OF IT... 

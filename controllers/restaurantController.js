@@ -96,18 +96,16 @@ router.post('/:place_id/comment', async (req, res, next) => {
 
 		const foundRestaurant = await Restaurant.findOne({ place_id: req.params.place_id });
 
-		console.log("\nFound Restaurant: ", foundRestaurant);
-		console.log("\nreq.body: ", req.body);
+		console.log("\nFound Restaurant: \n", foundRestaurant);
+		console.log("\nreq.body: \n", req.body);
 
 		if (!foundRestaurant) {
 
 			const createdRestaurant = await Restaurant.create({
-
 				name: req.body.name,
 				address: req.body.address,
 				place_id: req.params.place_id,
 				userName: req.body.commentAuthor
-
 			})
 
 			theRestaurant = createdRestaurant;
@@ -115,12 +113,10 @@ router.post('/:place_id/comment', async (req, res, next) => {
 			console.log(`\nCreated Restaurant: ${createdRestaurant} <==== we have just created this restaurant in GET'/restaurant/:place_id ROUTE`);
 
 			const createdComment = await Comment.create({
-
 				commentBody: req.body.commentBody,
 				commentAuthor: req.body.commentAuthor,
 				restaurant_name: theRestaurant.name,
 				restaurant_id: theRestaurant.id
-
 			})
 
 			createdRestaurant.comments.push(createdComment);
@@ -135,38 +131,49 @@ router.post('/:place_id/comment', async (req, res, next) => {
 
 			await foundUser.save();
 
-			console.log('\n=========var foundUser saved======');
-
 			res.status(200).json({
-
 				restaurant: theRestaurant,
 				newComment: theComment
-
 			})
 
-		} if (foundRestaurant) {
+		} 
+		if (foundRestaurant) {
 
 			const createdComment = await Comment.create({
-
 					commentBody: req.body.commentBody,
 					commentAuthor: req.body.commentAuthor,
 					restaurant_name: foundRestaurant.name,
 					restaurant_id: foundRestaurant.id
-
 				})
 
 			foundRestaurant.comments.push(createdComment);
 
 			await foundRestaurant.save();
 
-			console.log("\n============ var foundRestaurant saved ============");
+			theRestaurant = foundRestaurant;
 			
 			res.status(200).json({
-
-				restaurant: foundRestaurant, 
+				restaurant: theRestaurant,
 				newComment: theComment
-
 			})
+
+		} 
+		else {
+			if (!foundRestaurant.userName) {
+
+				const updatedRestaurant = await Restaurant.findByIdAndUpdate(foundRestaurant._id, {userName: req.body.commentAuthor}, {new: true});
+
+				updatedRestaurant.comments.push(createdComment);
+
+				await updatedRestaurant.save();
+
+				res.status(200).json({
+					restaurant: updatedRestaurant,
+					newComment: createdComment
+				})
+
+				console.log("restaurant updated with userName and sent w/ status:200");
+			}
 		}
 	}catch(err) {
 		console.error(next(err));
@@ -199,6 +206,8 @@ router.get('/:place_id', async (req, res, next) => {
 
 				let newRestaurant = {};
 
+//// there's one problem here... you aren't appending your username to the new restaurant record ///
+	///to fix: let's use the user_id as req.params, find and find the user based on that
 				const createdRestaurant = await Restaurant.create({
 
 					name: response.name,
@@ -238,22 +247,23 @@ router.get('/:place_id', async (req, res, next) => {
 
 
 
-// ////// GET '/restaurant/:place_id,' show restaurant details on google places API
-// router.get('/restaurant/details/:place_id', async (req, res, next) => {
-// 	try{
-// 		let placesDetailResponse = await fetch(process.env.PLACES_DETAIL_URL + req.params.place_id + '&key=' + process.env.API_KEY)
-// 		console.log("\napi call successful!")
-// 		let parsedDetailResponse = await placesDetailResponse.json();
-// 		console.log("\nparsing successful!\n", parsedDetailResponse);
-// 		const restaurant = parsedDetailResponse.result;
-// 		res.status(200).json({
-// 			data: restaurant
-// 		})
-// 		console.log("\nREQUEST SUCCESSFUL!");
-// 	}catch(err){
-// 		console.error(next(err));
-// 	}
-// })
+//////// GET '/restaurant/details/:place_id,' show restaurant details on google places API
+router.get('/restaurant/details/:place_id', async (req, res, next) => {
+	try{
+		let placesDetailResponse = await fetch(process.env.PLACES_DETAIL_URL + req.params.place_id + '&key=' + process.env.API_KEY)
+		console.log("\napi call successful!")
+		let parsedDetailResponse = await placesDetailResponse.json();
+		console.log("\nparsing successful!\n", parsedDetailResponse);
+		const restaurant = parsedDetailResponse.result;
+		res.status(200).json({
+			data: restaurant
+		})
+		console.log("\nREQUEST SUCCESSFUL!");
+	}catch(err){
+		console.error(next(err));
+	}
+});
+/////// END OF '/restaurant/details/:place_id' api route
 
 
 module.exports = router;
