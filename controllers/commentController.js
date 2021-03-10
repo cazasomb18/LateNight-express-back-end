@@ -88,6 +88,8 @@ router.delete('/restaurant/:place_id/:comment_id', async (req, res, next) => {
 		}
 		foundRestaurant.comments.splice(index, 1);
 		const foundUser = await User.findOne({userName: foundRestaurant.userName});
+
+		console.log("FOUND USER: ", foundUser);
 		let index2;
 		for (let i = 0; i < foundUser.comments.length; i++) {
 			if (foundUser.comments[i]._id.toString() === req.params.comment_id) {

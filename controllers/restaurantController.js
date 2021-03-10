@@ -6,33 +6,8 @@ const User = require('../models/user')
 require('dotenv').config();
 require('isomorphic-fetch');
 require('es6-promise').polyfill();
-const NodeGeocoder = require('node-geocoder');
-const apiUrl = process.env.API_URL;
+
 const apiKey = process.env.API_KEY;
-
-const options = {
-	provider: 'google',
-	httpAdapter: 'https',
-	apiKey: apiKey,
-	formatter: null
-}
-
-const geocoder = NodeGeocoder(options);
-
-/// GET '/' restaurants GETS all DATA for ALL restaurants matching query ///
-router.get('/', async (req, res, next) => {
-	try{
-		const response = await fetch(apiUrl + apiKey);
-		const allRestaurants = await response.json()
-		console.log('this is req.body: ', allRestaurants);
-		res.status(200).json({
-			data: allRestaurants.results
-		})
-	}catch(err){
-		console.error(next(err));
-	}
-});
-/////////////// END of GET '/' restaurants show route//////////////
 
 
 ///// restaurants/nearby GET route '/' this is the geolocation backend api call /////
@@ -49,10 +24,6 @@ router.get('/nearby', async (req, res, next) => {
 
 			parsedNearbyResponse = await nearbySearchResponse.json();
 
-			// photoIDs = await parsedNearbyResponse.results.map(i => {
-			// 	return parsedNearbyResponse.results[i].photos[0].photo_reference;
-			// })
-
 			resultLatLng = await parsedNearbyResponse.results.map((props, i) => {
 				return parsedNearbyResponse.results[i].geometry.location;
 			});
@@ -61,8 +32,7 @@ router.get('/nearby', async (req, res, next) => {
 
 			res.status(200).json({
 				data: parsedNearbyResponse,
-				resultLatLng: resultLatLng,
-				ok: true
+				resultLatLng: resultLatLng
 			})
 
 		};
@@ -110,7 +80,7 @@ router.post('/:place_id/comment', async (req, res, next) => {
 
 			theRestaurant = createdRestaurant;
 
-			console.log(`\nCreated Restaurant: ${createdRestaurant} <==== we have just created this restaurant in GET'/restaurant/:place_id ROUTE`);
+			console.log(`\nCreated Restaurant: \n${createdRestaurant} <==== we have just created this restaurant in GET'/restaurant/:place_id ROUTE`);
 
 			const createdComment = await Comment.create({
 				commentBody: req.body.commentBody,
@@ -137,43 +107,52 @@ router.post('/:place_id/comment', async (req, res, next) => {
 			})
 
 		} 
-		if (foundRestaurant) {
+		if (!foundRestaurant.userName) {
+
+			const updatedRestaurant = await Restaurant.findByIdAndUpdate(foundRestaurant._id, {userName: req.body.commentAuthor}, {new: true});
+
+			await updatedRestaurant.save();
 
 			const createdComment = await Comment.create({
-					commentBody: req.body.commentBody,
-					commentAuthor: req.body.commentAuthor,
-					restaurant_name: foundRestaurant.name,
-					restaurant_id: foundRestaurant.id
-				})
-
-			foundRestaurant.comments.push(createdComment);
-
-			await foundRestaurant.save();
-
-			theRestaurant = foundRestaurant;
-			
-			res.status(200).json({
-				restaurant: theRestaurant,
-				newComment: theComment
+				commentBody: req.body.commentBody,
+				commentAuthor: req.body.commentAuthor,
+				restaurant_name: updatedRestaurant.name,
+				restaurant_id: updatedRestaurant.id
 			})
 
-		} 
+			updatedRestaurant.comments.push(createdComment);
+
+			await updatedRestaurant.save();
+
+			res.status(200).json({
+				restaurant: updatedRestaurant,
+				newComment: createdComment
+			})
+
+			console.log("restaurant updated with userName and sent w/ status:200");
+		}
 		else {
-			if (!foundRestaurant.userName) {
+			if (foundRestaurant) {
 
-				const updatedRestaurant = await Restaurant.findByIdAndUpdate(foundRestaurant._id, {userName: req.body.commentAuthor}, {new: true});
+				const createdComment = await Comment.create({
+						commentBody: req.body.commentBody,
+						commentAuthor: req.body.commentAuthor,
+						restaurant_name: foundRestaurant.name,
+						restaurant_id: foundRestaurant.id
+					})
 
-				updatedRestaurant.comments.push(createdComment);
+				foundRestaurant.comments.push(createdComment);
 
-				await updatedRestaurant.save();
+				await foundRestaurant.save();
 
+				theRestaurant = foundRestaurant;
+				
 				res.status(200).json({
-					restaurant: updatedRestaurant,
-					newComment: createdComment
+					restaurant: theRestaurant,
+					newComment: theComment
 				})
 
-				console.log("restaurant updated with userName and sent w/ status:200");
-			}
+			} 
 		}
 	}catch(err) {
 		console.error(next(err));
@@ -248,22 +227,22 @@ router.get('/:place_id', async (req, res, next) => {
 
 
 //////// GET '/restaurant/details/:place_id,' show restaurant details on google places API
-router.get('/restaurant/details/:place_id', async (req, res, next) => {
+router.get('/restaurant/photos/:place_id', async (req, res, next) => {
 	try{
-		let placesDetailResponse = await fetch(process.env.PLACES_DETAIL_URL + req.params.place_id + '&key=' + process.env.API_KEY)
-		console.log("\napi call successful!")
-		let parsedDetailResponse = await placesDetailResponse.json();
-		console.log("\nparsing successful!\n", parsedDetailResponse);
-		const restaurant = parsedDetailResponse.result;
-		res.status(200).json({
-			data: restaurant
-		})
-		console.log("\nREQUEST SUCCESSFUL!");
+		let placesPhotosResponse = await fetch(process.env.PLACES_DETAIL_URL + req.params.place_id + '&fields=photo,url&key=' + apiKey)
+		let parsedDetailResponse = await placesPhotosResponse.json();
+		const photoRef = parsedDetailResponse.result.photos[0].photo_reference;
+		if (photoRef) {
+			let photoResponse = await fetch(process.env.PLACES_PHOTOS_URL + photoRef + '&key='+ apiKey + '&maxwidth=400&maxheight=400')
+			res.status(200).json({
+				data: photoResponse
+			})
+		}
 	}catch(err){
 		console.error(next(err));
 	}
 });
 /////// END OF '/restaurant/details/:place_id' api route
-
+//https://git.heroku.com/late-night-bytes.git
 
 module.exports = router;
