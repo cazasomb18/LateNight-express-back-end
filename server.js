@@ -38,7 +38,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 const corsOptions = {
-  origin: process.env.FRONT_END_URL,
+  origin: process.env.HEROKU_URL,
   credentials: true,
   optionsSuccessStatus: 200
 }
