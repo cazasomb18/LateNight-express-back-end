@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "Late Night Backend",
   "main": "server.js",
+  "engines": {
+    "node": "14.x",
+    "npm": "6.x"
+  },
   "dependencies": {
     "axios": "^0.21.1",
     "bcrypt": "^5.0.1",
