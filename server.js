@@ -9,8 +9,6 @@ require('dotenv').config();
 require('isomorphic-fetch');
 require('es6-promise').polyfill();
 
-const apiKey = process.env.API_KEY;
-
 
 
 
@@ -40,7 +38,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 const corsOptions = {
-  origin: process.env.HEROKU_URL,
+  origin: process.env.FRONT_END_URL,
   credentials: true,
   optionsSuccessStatus: 200
 }
