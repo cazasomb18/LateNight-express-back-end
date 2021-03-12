@@ -78,19 +78,29 @@ router.get('/usercomments/:_id', async (req, res, next) => {
 
 /// POST auth/login --> login user that isn't already logged in///
 router.post('/login', async (req, res, next) => {
-	const foundUser = await User.findOne({ userName: req.body.userName });
-	if(foundUser) {
-		const passwordMatch = bcrypt.compareSync(req.body.password, foundUser.password);
-		if (passwordMatch){
-				req.session.message = 'Username and password matches';
+	try{
+		const foundUser = await User.findOne({ userName: req.body.userName });
+		if(foundUser) {
+			const passwordMatch = bcrypt.compareSync(req.body.password, foundUser.password);
+			if (passwordMatch){
+					req.session.message = 'Username and password matches';
+					res.json({
+						status: 200,
+						data: foundUser,
+						success: true
+					})
+					console.log(req.body.userName + " has logged in successfully");
+			} if (!passwordMatch) {
+				req.session.message = "Login failed. Username or password were incorrect";
 				res.json({
-					status: 200,
-					data: foundUser,
-					success: true
+					status: 400,
+					data: req.session.message,
+					success: false
 				})
-				console.log(req.body.userName + " has logged in successfully");
-		} if (!passwordMatch) {
-			req.session.message = "Login failed. Username or password were incorrect";
+				console.log(req.session.message);
+			}
+		} if(!foundUser) {
+			req.session.message = "There were no users under that username. Please register."
 			res.json({
 				status: 400,
 				data: req.session.message,
@@ -98,14 +108,8 @@ router.post('/login', async (req, res, next) => {
 			})
 			console.log(req.session.message);
 		}
-	} if(!foundUser) {
-		req.session.message = "There were no users under that username. Please register."
-		res.json({
-			status: 400,
-			data: req.session.message,
-			success: false
-		})
-		console.log(req.session.message);
+	}catch(err){
+		console.error(next(err));
 	}
 });
 /////////END of POST auth/login///////
